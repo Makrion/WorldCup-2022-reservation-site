@@ -18,7 +18,7 @@ class UserFactory extends Factory
     public function definition()
     {
         $genders = array('M', 'F');
-        $role = array(0, 1, 2);
+        $role = array('admin', 'manager', 'user');
         return [
             'username' => fake()->unique()->userName(),
             'first_name' => fake()->firstName(),
@@ -28,7 +28,7 @@ class UserFactory extends Factory
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'gender' => $genders [array_rand($genders)],
             'birth_date' => fake()->unixTime(),
-            'role' => array_rand($role),
+            'role' => $role[ array_rand($role) ],
         ];
     }
 
