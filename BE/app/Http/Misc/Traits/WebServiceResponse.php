@@ -7,19 +7,15 @@ trait WebServiceResponse
     // ok this is not found??
     public function errorResponse($error, $code = 422)
     {
-        return $this->generalResponse("", $error, $code);
+        return $this->generalResponse( $error, $code);
     }
-    public function generalResponse($data = "", $msg = "", $status_code = "200")
+
+    public function generalResponse($data = "", $status_code = "200")
     {
         if ($data != "") {
-            return response()->json([
-                "response"          => $data,
-                "meta"         => [ "status" => $status_code, "msg" => $msg]
-            ], $status_code);
+            return response()->json($data, $status_code);
         } else {
-            return response()->json([
-            "meta"         => [ "status" => $status_code, "msg" => $msg]
-            ], $status_code);
+            return response()->json("", $status_code);
         }
     }
 }

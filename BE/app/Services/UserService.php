@@ -11,17 +11,20 @@ use Illuminate\Support\Facades\Password;
 
 class UserService
 {
-    public function register(string $email, string $password, int $age, string $username)
+    public function register(string $username, string $password, string $email, string $first_name, string $last_name, int $birth_date, string $gender, int $role, $nationality)
     {
         $user = User::create([
+            'username' => $username,
             'email' => $email,
             'password' => Hash::make($password),
-            'age' => $age,
-            'linked_by_google' => 'isLinkedByGoogle',
-            'google_id' => 'googleId'
+            'first_name'=> $first_name,
+            'last_name' => $last_name, 
+            'birth_date' => $birth_date,
+            'gender' => $gender,
+            'email' => $email,
+            'role' => $role,
+            'nationality' => $nationality
             ]);
-
-
         return $user;
     }
 

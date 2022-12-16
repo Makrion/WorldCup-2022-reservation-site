@@ -2,25 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Misc\Traits\WebServiceResponse;
 use Illuminate\Http\Request;
+use App\Services\UserService;
+use App\Http\Resources\UserResource;
+use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\UserLoginRequest;
 
 class UserController extends Controller
 {
+    use WebServiceResponse;
 
     public function register(UserRegisterRequest $request)
     {
         $userService = new UserService();
-        $blogService = new BlogService();
-        $unique = $blogService->uniqueBlog($request->blog_username);
-        if (!$unique) {
-            return $this->errorResponse(Errors::MISSING_BLOG_USERNAME, '422');
-        }
         $user = $userService->register(
-            $request->email,
+            $request->username,
             $request->password,
-            $request->age,
-            false,
-            $request->blog_username
+            $request->email,
+            $request->first_name,
+            $request->last_name,
+            $request->birth_date,
+            $request->gender,
+            $request->role,
+            $request->nationality
         );
         if (!$user) {
             return $this->errorResponse('not found', '404');
@@ -28,7 +33,7 @@ class UserController extends Controller
 
         $userService->grantAccessToken($user);
 
-        return $this->generalResponse(new UserResource($user), "Successful response", "200");
+        return $this->generalResponse(new UserResource($user), "200");
     }
     
 }
