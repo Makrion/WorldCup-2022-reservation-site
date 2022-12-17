@@ -19,10 +19,10 @@ return new class extends Migration
             $table->string('password');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email');
-            $table->enum('gender', ['m', 'f']);
-            $table->unsignedBigInteger('birth_date');
-            $table->enum('role', ['fan', 'manager', 'admin']);
+            $table->string('email')->unique();
+            $table->string('gender');
+            $table->BigInteger('birth_date');
+            $table->unsignedSmallInteger('role');
             $table->string('nationality')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();

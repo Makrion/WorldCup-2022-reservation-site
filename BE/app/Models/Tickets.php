@@ -10,12 +10,12 @@ class Tickets extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
+        'match_id',
         'reservation_date',
         'seat',
         'seat_row',
         'seat_number',
-        'ticket_number',
-        'user_id',
-        'match_id'
+        'ticket_number',  #uuid
     ];
 }

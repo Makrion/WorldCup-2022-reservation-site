@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rule;
 
-class UserRegisterRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,18 +26,15 @@ class UserRegisterRequest extends FormRequest
     public function rules()
     {
         $genders = array('m' ,'f');
-        $roles = array(1,2);
         $min_birth_date = strtotime("1920-1-1");
         $max_birth_date = strtotime("2018-1-1");
         return [
-            'username' => 'required|string|unique:users',
-            'password' => ['required', 'string', Password::min(8)],
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'birth_date' => "required|integer|min:$min_birth_date|max:$max_birth_date",
-            'gender' => ['required', Rule::in($genders)],
-            'email' => 'required|email|unique:users',
-            'role' => ['required', Rule::in($roles)],
+            'old_password' => 'required',
+            'password' => ['string', Password::min(8)],
+            'first_name' => 'string',
+            'last_name' => 'string',
+            'birth_date' => "integer|min:$min_birth_date|max:$max_birth_date",
+            'gender' => [Rule::in($genders)],
             'nationality' => 'string|nullable'
         ];
     }

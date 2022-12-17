@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('match_id');
             $table->unsignedBigInteger('reservation_date');
-            $table->enum('seat', ['norm', 'vip']);
+            $table->string('seat'); //norm or vip
             $table->unsignedInteger('seat_row')->nullable();
             $table->unsignedInteger('seat_number')->nullable();
             $table->uuid('ticket_number');

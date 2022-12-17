@@ -28,9 +28,22 @@ class UserService
         return $user;
     }
 
-    public function checkLoginCredentials(string $email, string $password)
+    public function update($user, $password, $first_name, $last_name, $birth_date, $gender, $nationality)
     {
-        $user = User::where('email', $email)->first();
+        $user->update([
+            'password' => $password ?  Hash::make($password) : $user->password,
+            'first_name' => $first_name ?? $user->first_name,
+            'last_name' => $last_name ?? $user->last_name,
+            'birth_date' =>  $birth_date ?? $user->birth_date,
+            'gender' => $gender ?? $user->gender,
+            'nationality' =>  $nationality ?? $user->nationality,
+                    ]);
+        return $user;
+    } 
+
+    public function checkLoginCredentials(string $username, string $password)
+    {
+        $user = User::where('username', $username)->first();
         if (!$user || !Hash::check($password, $user->password)) {
             $user = null;
         }
@@ -64,8 +77,6 @@ class UserService
         }
         return false;
     }
-
-
 
 
     public function uniqueEmail(string $email)

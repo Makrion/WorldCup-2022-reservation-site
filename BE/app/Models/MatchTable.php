@@ -16,6 +16,7 @@ class MatchTable extends Model
         'match_date',
         'main_ref',
         'lineman_1',
-        'lineman_2'
+        'lineman_2',
+        'stadium_id'
     ];
 }
