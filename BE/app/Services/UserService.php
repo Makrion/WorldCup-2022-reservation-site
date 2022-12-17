@@ -61,23 +61,6 @@ class UserService
         return true;
     }
 
-    public function verifyUserEmail(User $user, bool $resend)
-    {
-        if (!$user) {
-            return false;
-        }
-        if (! $user->hasVerifiedEmail()) {
-            if ($resend) {
-                $user->sendEmailVerificationNotification();
-                return true;
-            }
-            $user->markEmailAsVerified();
-            event(new Verified($user));
-            return true;
-        }
-        return false;
-    }
-
 
     public function uniqueEmail(string $email)
     {
@@ -85,5 +68,19 @@ class UserService
             return false;
         }
         return true;
+    }
+
+    public function index(bool $unverified_only, int $page_size) {
+        if($unverified_only) {
+            $users = User::where('role','!=', 0)->where('email_verified_at', Null)
+                    ->orderBy('id', 'asc')
+                    ->Paginate($page_size);
+            return $users;
+        }
+       $users = User::where('role','!=', 0)
+                    ->orderBy('id', 'asc')
+                    ->Paginate($page_size);
+
+        return $users;
     }
 }

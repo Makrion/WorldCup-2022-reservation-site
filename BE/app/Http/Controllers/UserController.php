@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Misc\Traits\WebServiceResponse;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserCollection;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\UserAdminRequest;
+use App\Http\Requests\UserAdminIndexRequest;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -83,5 +88,54 @@ class UserController extends Controller
         }
 
         return $this->errorResponse('wrong old password', '422');
+    }
+
+    public function delete(UserAdminRequest $request)
+    {
+        $request_validated = $request->validated();
+        $user = User::where('id',  $request_validated['user_id'])->first();
+
+        if($user){
+            $user->delete();
+            return $this->generalResponse( "Successful response", '200');
+        }
+        return $this->errorResponse('there are no users with that id', '422');
+    }
+
+    public function verify(UserAdminRequest $request)
+    {
+        $request_validated = $request->validated();
+        $user = User::where('id',  $request_validated['user_id'])->first();
+
+        if($user){
+            if (! $user->hasVerifiedEmail()) {
+                $user->markEmailAsVerified();
+                return $this->generalResponse( "Successful response", '200');
+            }
+            return $this->errorResponse('this user is already verified', '422');
+        }
+        return $this->errorResponse('there are no users with that id', '422');
+    }
+
+    public function index(UserAdminIndexRequest $request)
+    {
+        $request_validated = $request->validated();
+        $userService = new UserService();
+
+        $request->merge(['page' => $request_validated['current_page']]);
+        $users = $userService->index(false, $request_validated['page_size']);
+
+        return $this->generalResponse( new UserCollection($users), '200');
+    }
+
+    public function index_unverified(UserAdminIndexRequest $request)
+    {
+        $request_validated = $request->validated();
+        $userService = new UserService();
+
+        $request->merge(['page' => $request_validated['current_page']]);
+        $users = $userService->index(true, $request_validated['page_size']);
+
+        return $this->generalResponse( new UserCollection($users), '200');
     }
 }

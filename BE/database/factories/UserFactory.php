@@ -17,13 +17,13 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        $genders = array('M', 'F');
-        $role = array('admin', 'manager', 'user');
+        $genders = array('m', 'f');
+        $role = array(0, 1, 2);
         return [
             'username' => fake()->unique()->userName(),
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
-            'email' => fake()->safeEmail(),
+            'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'gender' => $genders [array_rand($genders)],
