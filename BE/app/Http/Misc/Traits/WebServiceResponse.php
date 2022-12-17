@@ -5,9 +5,12 @@ namespace App\Http\Misc\Traits;
 trait WebServiceResponse
 {
     // ok this is not found??
-    public function errorResponse($error, $code = 422)
+    public function messageResponse($error, $code = 422)
     {
-        return $this->generalResponse( $error, $code);
+        $msg = [
+            "message" => $error
+        ];
+        return $this->generalResponse( $msg, $code);
     }
 
     public function generalResponse($data = "", $status_code = "200")

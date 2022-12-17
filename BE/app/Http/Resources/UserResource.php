@@ -14,11 +14,21 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $res = [
             'id' => $this->id,
             'is_verified' => ($this->email_verified_at != null),
             'role' => $this->role,
-            'access_token' =>  $this->token()
+            'username' =>  $this->username,
+            'email' => $this->email,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'birth_date' => $this->birth_date,
+            'gender' => $this->gender,
+            'nationality' => $this->nationality
         ];
+        if($this->token()){
+            $res['access_token'] = $this->token();
+        }
+        return $res;
     }
 }

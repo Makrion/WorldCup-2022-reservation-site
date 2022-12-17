@@ -26,7 +26,7 @@ class UserCollection extends ResourceCollection
             $next_page = $this->currentPage() + 1 ;
         }
         return [
-            "users" => UserIndexResource::Collection($this->collection),
+            "users" => UserResource::Collection($this->collection),
             'count' => $this->count(),
             'next_page' => $next_page
             ];

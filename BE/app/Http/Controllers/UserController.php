@@ -40,7 +40,7 @@ class UserController extends Controller
             $nationality
         );
         if (!$user) {
-            return $this->errorResponse('not found', '404');
+            return $this->messageResponse('not found', '404');
         }
 
         $userService->grantAccessToken($user);
@@ -54,7 +54,7 @@ class UserController extends Controller
         $userService = new UserService();
         $user = $userService->checkLoginCredentials($request_validated['username'], $request_validated['password']);
         if (!$user) {
-            return $this->errorResponse('incorrect username or password', '422');
+            return $this->messageResponse('incorrect username or password', '422');
         }
         $userService->grantAccessToken($user);
         return $this->generalResponse(new UserResource($user), '200');
@@ -64,9 +64,9 @@ class UserController extends Controller
     {
         if ($request->user() && $request->user()->token()) {
             $request->user()->token()->delete();
-            return $this->generalResponse('Successful response', '200');
+            return $this->messageResponse('Successful response', '200');
         }
-        return $this->errorResponse('not found', '404');
+        return $this->messageResponse('not found', '404');
     }
     
     public function update(UserUpdateRequest $request)
@@ -84,10 +84,10 @@ class UserController extends Controller
             $request->gender,
             $request->nationality
             );
-            return $this->generalResponse( "Successful response", '200');
+            return $this->messageResponse( "Successful response", '200');
         }
 
-        return $this->errorResponse('wrong old password', '422');
+        return $this->messageResponse('wrong old password', '422');
     }
 
     public function delete(UserAdminRequest $request)
@@ -97,9 +97,9 @@ class UserController extends Controller
 
         if($user){
             $user->delete();
-            return $this->generalResponse( "Successful response", '200');
+            return $this->messageResponse( "Successful response", '200');
         }
-        return $this->errorResponse('there are no users with that id', '422');
+        return $this->messageResponse('there are no users with that id', '422');
     }
 
     public function verify(UserAdminRequest $request)
@@ -110,11 +110,11 @@ class UserController extends Controller
         if($user){
             if (! $user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();
-                return $this->generalResponse( "Successful response", '200');
+                return $this->messageResponse( "Successful response", '200');
             }
-            return $this->errorResponse('this user is already verified', '422');
+            return $this->messageResponse('this user is already verified', '422');
         }
-        return $this->errorResponse('there are no users with that id', '422');
+        return $this->messageResponse('there are no users with that id', '422');
     }
 
     public function index(UserAdminIndexRequest $request)
