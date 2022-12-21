@@ -28,3 +28,10 @@ services:
     # then ctrl+c and comment it and run docker-compose up again
     #......
     #entrypoint: [ "bash", "-c", "./start.sh"]
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
