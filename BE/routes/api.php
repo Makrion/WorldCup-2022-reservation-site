@@ -3,16 +3,19 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MatchTableController;
 
 
 
 #note: still didn't apply the verification and authorization rules
 
-# user routes
+# common routes
 Route::post('/user/login', [UserController::class,'login']);
 Route::post('/user/register', [UserController::class,'register']);
 Route::post('/user/logout', [UserController::class,'logout'])->middleware('auth:api');
 Route::put('/user/update', [UserController::class,'update'])->middleware('auth:api');
+Route::get('/matches', [MatchTableController::class,'index']);
+Route::get('/match/{id}', [MatchTableController::class,'show']);
 
 # admin routes
 Route::delete('/user/delete', [UserController::class,'delete'])->middleware('auth:api');

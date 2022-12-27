@@ -17,16 +17,15 @@ class MatchTableFactory extends Factory
      */
     public function definition()
     {
-        $match = Stadium::factory()->create();
-        $shapes = array('oval', 'rect', 'square');
+        $stadium = Stadium::factory()->create();
         return [
             'team_1' => rand(1,32),
             'team_2' => rand(1,32),
-            'match_date' => fake()->unixTime(),
+            'match_date' => 1672111650 + rand(0,32000000),
             'main_ref' => fake()->name(),
             'lineman_1' => fake()->name(),
             'lineman_2' => fake()->name(),
-            'stadium_id'=> $match->id
+            'stadium_id'=> $stadium->id
         ];
     }
 }
