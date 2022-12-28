@@ -5,7 +5,8 @@ import SignIn from './Components/SignIn/SignIn'
 import AdminPanel from './Components/AdminPanel/AdminPanel'
 import NotFound from './Components/NotFound/NotFound'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
-import { CreateMatch } from './Components/CreateMatch/CreateMatch'
+import CreateMatch from './Components/CreateMatch/CreateMatch'
+import EditMatch from './Components/EditMatch/EditMatch'
 
 const App = () => {                           
 
@@ -30,6 +31,9 @@ const App = () => {
             </Route>
             <Route exact path="/CreateMatch">
                 <CreateMatch></CreateMatch>
+            </Route>
+            <Route path="/EditMatch/*">
+                <EditMatch></EditMatch>
             </Route>
             <Route path="*">
               <NotFound></NotFound>
