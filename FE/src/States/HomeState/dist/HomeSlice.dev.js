@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = exports.Colors = exports.SetInferredRole = void 0;
+exports["default"] = exports.SetInferredRole = void 0;
 
 var _toolkit = require("@reduxjs/toolkit");
 
@@ -22,11 +22,5 @@ var homeSlice = (0, _toolkit.createSlice)({
 });
 var SetInferredRole = homeSlice.actions.SetInferredRole;
 exports.SetInferredRole = SetInferredRole;
-
-var Colors = function Colors(state) {
-  return state.settings.allColors[state.settings.colorIndex];
-};
-
-exports.Colors = Colors;
 var _default = homeSlice.reducer;
 exports["default"] = _default;

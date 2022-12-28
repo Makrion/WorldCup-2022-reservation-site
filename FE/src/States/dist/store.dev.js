@@ -7,9 +7,9 @@ exports["default"] = void 0;
 
 var _toolkit = require("@reduxjs/toolkit");
 
-var _UserSlice = _interopRequireDefault(require("./UserState/UserSlice"));
-
 var _HomeSlice = _interopRequireDefault(require("./HomeState/HomeSlice"));
+
+var _UserSlice = _interopRequireDefault(require("./UserState/UserSlice"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 

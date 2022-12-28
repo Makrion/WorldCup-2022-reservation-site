@@ -15,5 +15,4 @@ const initialState = {
 const homeSlice = createSlice({name: "home", initialState, reducers})
 
 export const { SetInferredRole } = homeSlice.actions
-export const Colors = (state) => state.settings.allColors[state.settings.colorIndex];
 export default homeSlice.reducer
