@@ -155,15 +155,25 @@ export default function ViewMatch() {
           </div>
         </div>
 
-        <Button
-          onClick={() => {history.goBack()}}
-          style={{ width: '420px', borderRadius: 2 }}
-          variant="outlined"
-          fullWidth
-          disabled={!enableCreateMatchButton()}
-        >
-          Back
-        </Button>
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <Button
+            onClick={() => { history.goBack() }}
+            style={{ borderRadius: 2, margin: '5px'}}
+            variant="contained"
+            fullWidth
+          >
+            Back
+          </Button>
+
+          <Button
+            onClick={() => { history.push(`/EditMatch/${matchId}`) }}
+            style={{ borderRadius: 2, margin: '5px'}}
+            variant="outlined"
+            fullWidth
+          >
+            Edit
+          </Button>
+        </div>
 
       </div>
       }

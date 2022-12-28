@@ -2,9 +2,9 @@ import axios from 'axios'
 import React, { useEffect, useState } from "react";
 
 import { Button } from '@mui/material';
-import { LocalizationProvider} from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useParams, useHistory  } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { authHeader } from "../../auth";
 import { dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from '../../Common';
@@ -14,7 +14,7 @@ export default function EditMatch() {
   let { matchId } = useParams<{ matchId?: string }>();
   const history = useHistory();
 
-  if(!Number.parseInt(matchId!!)) {
+  if (!Number.parseInt(matchId!!)) {
     history.push('/NotFound');
   }
 
@@ -94,8 +94,8 @@ export default function EditMatch() {
   );
 
   const enableEditMatchButton: () => boolean = () => {
-    let enable = 
-         team1.length > 0
+    let enable =
+      team1.length > 0
       && team2.length > 0
       && stadium.id >= 0
       && mainRef.length > 0
@@ -111,80 +111,89 @@ export default function EditMatch() {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+    <div>
       {isLoading && loading()}
-      {!isLoading && <div>
-        <h1 style={{ textAlign: 'center', padding: '20px' }}>Edit Match</h1>
+      {!isLoading
+        && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', alignContent: 'center'}}>
+          <h1 style={{ textAlign: 'center', padding: '20px' }}>Edit Match</h1>
 
 
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', paddingRight: 20 }}>
-            {dropDown(team1, teams, 'Edit Team 1', '200px', setTeam1)}
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {dropDown(team2, teams, 'Edit Team 2', '200px', setTeam2)}
-          </div>
-        </div>
-
-
-        <div style={{ paddingTop: '20px', }}>
-          {dropDown(stadium.name, stadiums.map((s) => s.name), 'Edit stadium', '420px', (sName) => setStadium(stadiums.find((s) => s.name === sName)!!))}
-        </div>
-
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
           <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '20px 20px 0 0'
-              }}
-            >
-              {matchDate(date, setDate)}
+            <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
+              {dropDown(team1, teams, 'Edit Team 1', '200px', setTeam1)}
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '20px 20px 0 0'
-              }}
-            >
-              {matchTime(date, setDate)}
+            <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
+              {dropDown(team2, teams, 'Edit Team 2', '200px', setTeam2)}
             </div>
           </div>
-        </LocalizationProvider>
 
-        <div style={{ paddingTop: '20px' }}>
-          {dropDown(mainRef, refs, 'Edit main referee', '420px', setMainRef)}
-        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'row', paddingTop: 20, paddingBottom: 20 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', paddingRight: 20 }}>
-            {dropDown(firstLineRef, refs, 'Edit first line referee', '200px', setFirstLineRef)}
+          <div style={{ padding: '10px 0', }}>
+            {dropDown(stadium.name, stadiums.map((s) => s.name), 'Edit stadium', '420px', (sName) => setStadium(stadiums.find((s) => s.name === sName)!!))}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {dropDown(secondLineRef, refs, 'Edit second line referee', '200px', setSecondLineRef)}
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div style={{ display: 'flex', flexDirection: 'row', padding: '10px 0'}}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  paddingRight: '10px'
+                }}
+              >
+                {matchDate(date, setDate)}
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  paddingLeft: '10px'
+                }}
+              >
+                {matchTime(date, setDate)}
+              </div>
+            </div>
+          </LocalizationProvider>
+
+          <div style={{ paddingTop: '10px' }}>
+            {dropDown(mainRef, refs, 'Edit main referee', '420px', setMainRef)}
           </div>
+
+          <div style={{ display: 'flex', flexDirection: 'row', paddingTop: 20, paddingBottom: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', paddingRight: 20 }}>
+              {dropDown(firstLineRef, refs, 'Edit first line referee', '200px', setFirstLineRef)}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {dropDown(secondLineRef, refs, 'Edit second line referee', '200px', setSecondLineRef)}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between', width: '420px'}}>
+
+            <Button
+              onClick={() => { history.goBack() }}
+              style={{ borderRadius: 2, marginRight: '5px'}}
+              variant="contained"
+              fullWidth
+            >
+              Back
+            </Button>
+
+            <Button
+              onClick={() => editMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date)}
+              style={{ borderRadius: 2, marginLeft: '5px'}}
+              variant="outlined"
+              fullWidth
+              disabled={!enableEditMatchButton()}
+            >
+              Apply Edits
+            </Button>
+          </div>
+
         </div>
-
-        <Button
-          onClick={() => editMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date)}
-          style={{ width: '420px', borderRadius: 2 }}
-          variant="outlined"
-          fullWidth
-          disabled={!enableEditMatchButton()}
-        >
-          Edit Match
-        </Button>
-
-      </div>
       }
     </div>
   );
@@ -215,14 +224,14 @@ function editMatchRequest(
 
   axios.put(
     `api/match/update/${matchId}`, {
-      "team_1": t1,
-      "team_2": t2,
-      "main_ref": mainRef,
-      "lineman_1": firstLineRef,
-      "lineman_2": secondLineRef,
-      "match_date": time,
-      "stadium_id": stadium_id
-    },
+    "team_1": t1,
+    "team_2": t2,
+    "main_ref": mainRef,
+    "lineman_1": firstLineRef,
+    "lineman_2": secondLineRef,
+    "match_date": time,
+    "stadium_id": stadium_id
+  },
     {
       headers: authHeader()
     }
