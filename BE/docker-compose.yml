@@ -27,7 +27,7 @@ services:
     # uncommment this line for the first run only
     # then ctrl+c and comment it and run docker-compose up again
     #......
-    entrypoint: [ "bash", "-c", "./start.sh"]
+    #entrypoint: [ "bash", "-c", "./start.sh"]
   phpmyadmin:
     image: phpmyadmin
     restart: always
