@@ -18,7 +18,8 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        return [
+        $prod = 1;
+        $admin = [
             'username' => 'admin',
             'first_name' => 'admin',
             'last_name' => 'admin',
@@ -29,6 +30,24 @@ class UserFactory extends Factory
             'birth_date' => fake()->unixTime(),
             'role' => 0,
         ];
+        $genders = array('M', 'F');
+        $role = array(1, 2);
+        $norm = [
+            'username' => fake()->unique()->userName(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => fake()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'gender' => $genders [array_rand($genders)],
+            'birth_date' => fake()->unixTime(),
+            'role' => $role[ array_rand($role) ],
+        ];
+
+        if($prod){
+            return $admin;
+        }
+        return $norm;
     }
 
     /**
