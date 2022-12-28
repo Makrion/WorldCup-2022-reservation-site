@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MatchTableController;
-
+use App\Http\Controllers\StadiumController;
 
 
 #note: still didn't apply the verification and authorization rules
@@ -26,5 +26,5 @@ Route::post('/user/index/unverified', [UserController::class,'index_unverified']
 # manager routes
 Route::post('/match/create', [MatchTableController::class,'create'])->middleware('auth:api', 'verified');
 Route::put('/match/update/{id}', [MatchTableController::class,'update'])->middleware('auth:api', 'verified');
-// Route::get('/matches', [MatchTableController::class,'index']);
-// Route::get('/matches', [MatchTableController::class,'index']);
+Route::post('/stadium/create', [StadiumController::class,'create'])->middleware('auth:api', 'verified');
+Route::get('/stadiums', [StadiumController::class,'index'])->middleware('auth:api', 'verified');

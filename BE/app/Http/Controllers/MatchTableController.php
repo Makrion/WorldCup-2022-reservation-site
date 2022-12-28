@@ -61,6 +61,9 @@ class MatchTableController extends Controller
             'stadium_id' => $request_validated['stadium_id']
             ]);
 
+        if(!$match){
+            return $this->messageResponse('could not create such match', '500');
+        }
         return $this->generalResponse(  new MatchTableResource($match), '200');
     }
     /*--------------------------------------------------------------------------------------------------------------------------------------- */
