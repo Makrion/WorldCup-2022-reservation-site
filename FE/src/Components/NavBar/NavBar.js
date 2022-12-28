@@ -2,29 +2,54 @@ import {Link} from 'react-router-dom'
 import './style/main/index.css';               
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { logoutAPI } from '../../States/UserState/UserSlice';
+import { useHistory } from 'react-router-dom';
+import { useEffect } from 'react';
 
 //stateless functional component (write sfc)
 const Navbar  = () => {
    const location = useLocation();
+   const dispatch = useDispatch();
+   const history = useHistory();
    const isLoggedIn = useSelector(state => state.user.isLoggedIn);
-   console.log(location.pathname)
+   const accessToken = useSelector(state => state.user.userInfo.accessToken);
+   const logoutSuccess = useSelector(state => state.user.logoutSuccess);
+   const logoutError = useSelector(state => state.user.logoutError);
+
+   useEffect(() => {
+      if(logoutSuccess){
+         history.push("/");
+      }
+   }, [logoutSuccess, history]);
+
+   useEffect(() => {
+      if(logoutError){
+         alert(logoutError);
+      }
+   }, [logoutError]);
+
+
 
    return ( 
       <nav className="navbar">
          <div className="logo" style={
             {cursor: "pointer"}
          } onClick={()=>{
-            window.location.href = "/";
+            history.push("/");
          }}>
          <h1>inStadium</h1>
          </div>
          <div className="links">
             <Link to="/">Home</Link>
             <Link to="/ViewAllMatches" >View Matches</Link>
-            {!isLoggedIn && <Link to="/Profile">Profile</Link>}
+            
+            {isLoggedIn && <Link to="/Profile">Profile</Link>}
 
             {(isLoggedIn)?
-            <Link to="/" >Logout</Link>
+            <Link to='#' onClick={()=>{
+               dispatch(logoutAPI(accessToken));    
+            }}>Logout</Link>
             :
                (location.pathname !=='/SignUp')?
                 <Link to="/SignUp" >Sign Up</Link>:

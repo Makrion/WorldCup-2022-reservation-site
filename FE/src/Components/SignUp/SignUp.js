@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   TextField,
@@ -16,13 +16,20 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { signUpAPI } from '../../States/UserState/UserSlice';
+import { useHistory } from 'react-router-dom';
 
 
 
 function SignUp() {
   const inferredRole = useSelector(state => state.home.inferredRole);
-  console.log(inferredRole)
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const isLoading = useSelector((state) => state.user.isLoading);
+  const signUpError = useSelector((state) => state.user.error);
   const [values, setValues] = useState({
     firstName: '',
     lastName: '',
@@ -32,7 +39,7 @@ function SignUp() {
     password: '',
     gender: '',
     role: inferredRole,
-    birthdate: '',
+    birthDate: '',
     showPassword: false,
   });
   const [errors, setErrors] = useState({
@@ -44,7 +51,7 @@ function SignUp() {
     password: '',
     gender: '',
     role: '',
-    birthdate: '',
+    birthDate: '',
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -59,6 +66,7 @@ function SignUp() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
 
   const validateForm = () => {
     let isValid = true;
@@ -116,11 +124,11 @@ function SignUp() {
       newErrors.role = '';
     }
 
-    if (!values.birthdate) {
+    if (!values.birthDate) {
       isValid = false;
-      newErrors.birthdate = 'Birthdate is required';
+      newErrors.birthDate = 'birthdate is required';
     } else {
-      newErrors.birthdate = '';
+      newErrors.birthDate = '';
     }
 
     setErrors(newErrors);
@@ -134,13 +142,17 @@ function SignUp() {
       setSubmitted(true);
     }
   };
+    //whenevr isLoggedIn is changed, it will redirect to home page
+    useEffect(() => {
+      if(isLoggedIn){
+        history.push('/');
+      }
+    }, [isLoggedIn]);
 
   return (
     <form className={classes.form} onSubmit={handleSubmit}>
       {submitted && (
-        <Alert variant="filled" severity="success">
-          Success! Your account has been created.
-        </Alert>
+        (isLoading)?(<Alert style={{marginTop: '1rem',}} severity="info">Loading</Alert>):(signUpError)?(<Alert style={{marginTop: '1rem',}} severity="error">{signUpError}</Alert>):(<Alert style={{marginTop: '1rem',}} severity="success">Sign Up Successful</Alert>)
       )}
       <TextField
         className={classes.textField}
@@ -273,13 +285,13 @@ function SignUp() {
         </FormControl>
         <TextField
           className={classes.textField}
-          label="Birthdate"
+          label="birthdate"
           type="date"
-          name="birthdate"
-          value={values.birthdate}
+          name="birthDate"
+          value={values.birthDate}
           onChange={handleChange}
-          error={Boolean(errors.birthdate)}
-          helperText={errors.birthdate}
+          error={Boolean(errors.birthDate)}
+          helperText={errors.birthDate}
             InputLabelProps={{
                shrink: true,
             }}
@@ -291,7 +303,17 @@ function SignUp() {
             color="primary"
             className={classes.button}
             type="submit"
-            disabled={submitted}
+            disabled={submitted && isLoading}
+            onClick={() => dispatch(signUpAPI({ username: values.username, 
+                                                password: values.password, 
+                                                email: values.email, 
+                                                first_name: values.firstName, 
+                                                last_name: values.lastName, 
+                                                nationality: values.country, 
+                                                role:(values.role==='Fan'? 2 :(values.role==='Coach'? 1 :'')), 
+                                                gender:(values.gender==="Male")?'m':(values.gender==="Female")?'f':'',
+                                                birth_date: (new Date(values.birthDate)).getTime()/1000
+                                              }))}
           >
             Sign Up
           </Button>

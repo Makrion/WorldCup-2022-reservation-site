@@ -10,11 +10,15 @@ import CreateMatch from './Components/CreateMatch/CreateMatch'
 import EditMatch from './Components/EditMatch/EditMatch'
 import ViewMatch from './Components/ViewMatch/ViewMatch'
 import ViewAllMatches from './Components/ViewAllMatches/ViewAllMatches'
-
 import axios from 'axios';
+import { loadInitialState } from './States/UserState/UserSlice'
+import { useDispatch } from 'react-redux'
+
 axios.defaults.baseURL = 'http://localhost:8000';
 
 const App = () => {                           
+  const dispatch = useDispatch();
+  dispatch(loadInitialState());
   return (
     <Router>
       <div className="App">
@@ -40,7 +44,7 @@ const App = () => {
                 <CreateMatch></CreateMatch>
             </Route>
             <Route path="/EditMatch/:matchId">
-                <EditMatch></EditMatch>
+                <EditMatch>EditMatch></EditMatch>
             </Route>
             <Route path="/ViewAllMatches">
                 <ViewAllMatches></ViewAllMatches>
