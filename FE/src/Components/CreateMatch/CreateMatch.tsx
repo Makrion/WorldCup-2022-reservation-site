@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, MenuItem, Button } from '@mui/material';
-import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { Button } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { authHeader } from "../../auth";
 import axios from 'axios'
-
-type ReactCallback<T> = React.Dispatch<React.SetStateAction<T>>;
-
-type Stadium = {
-  id: number
-  name: string
-};
+import { dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from "../../Common";
 
 export default function CreateMatch() {
   const defaultStadium: Stadium = {
@@ -25,7 +20,12 @@ export default function CreateMatch() {
   const [mainRef, setMainRef] = useState('');
   const [firstLineRef, setFirstLineRef] = useState('');
   const [secondLineRef, setSecondLineRef] = useState('');
-  const [date, setDate] = useState(new Date());
+
+
+  const defaultDate = new Date();
+  defaultDate.setDate(defaultDate.getDate() + 1);
+  defaultDate.setHours(defaultDate.getHours() + 1);
+  const [date, setDate] = useState(defaultDate);
 
   const [stadiums, setStadiums] = useState(new Array<Stadium>());
   const [teams, setTeams] = useState(new Array<string>());
@@ -52,16 +52,6 @@ export default function CreateMatch() {
     [teams, stadiums, refs]
   )
 
-  const clearData = () => {
-    setTeam1('');
-    setTeam2('');
-    setStadium(defaultStadium);
-
-    setMainRef('');
-    setFirstLineRef('');
-    setSecondLineRef('');
-  }
-
   const enableCreateMatchButton: () => boolean = () => {
     let enable = team1.length > 0
       && team2.length > 0
@@ -73,7 +63,7 @@ export default function CreateMatch() {
       && mainRef !== firstLineRef 
       && mainRef !== secondLineRef
       && firstLineRef !== secondLineRef
-      && date.getTime()> Date.now();
+      && date.getTime() > Date.now();
 
       return enable;
   };
@@ -143,7 +133,7 @@ export default function CreateMatch() {
         </div>
 
         <Button
-          onClick={() => createMatchRequest(team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, clearData)}
+          onClick={() => createMatchRequest(team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date)}
           style={{ width: '420px', borderRadius: 2 }}
           variant="outlined"
           fullWidth
@@ -158,14 +148,6 @@ export default function CreateMatch() {
   );
 }
 
-function loading() {
-  return (
-    <h1>
-      Loading ...
-    </h1>
-  )
-}
-
 function createMatchRequest(
   team1: string,
   team2: string,
@@ -174,7 +156,6 @@ function createMatchRequest(
   firstLineRef: string,
   secondLineRef: string,
   date: Date,
-  clearData: () => void
 ) {
   let t1 = Number.parseInt(team1.replace('Team ', ''));
   let t2 = Number.parseInt(team2.replace('Team ', ''));
@@ -189,113 +170,30 @@ function createMatchRequest(
   console.log(secondLineRef);
   console.log(time);
 
-  // axios.post(
-  //   'api/match/create', {
-  //     "team_1": t1,
-  //     "team_2": t2,
-  //     "main_ref": mainRef,
-  //     "lineman_1": firstLineRef,
-  //     "lineman_2": secondLineRef,
-  //     "match_date": time,
-  //     "stadium_id": stadium_id
-  //   }
-  // ).then((response) => {
-  //   if (response.status === 200) {
-  //     alert('Match created successfully');
-  //     clearData();
-  //   } else {
-  //     alert('Error creating match')
-  //   }
-  // });
+  let postData = {
+    "team_1": t1,
+    "team_2": t2,
+    "main_ref": mainRef,
+    "lineman_1": firstLineRef,
+    "lineman_2": secondLineRef,
+    "match_date": time,
+    "stadium_id": stadium_id
+  };
 
-  clearData();
-}
+  console.log(postData);
 
-
-function fetchTeams(setTeams: ReactCallback<Array<string>>){
-  let teams = Array.from(Array(32).keys()).map((teamNumber) => `Team ${teamNumber}`);
-  setTeams(teams);
-}
-
-function fetchStadiums(setData: ReactCallback<Array<Stadium>>) {
-  // axios.get('api/stadiums', {
-  //   params: {
-  //     page_size: 32,
-  //     current_page: 1
-  //   }
-  // }).then((response) => {
-  //   if (response.status === 200) {
-  //     let res = response.data.json();
-  //     let stadiums = res['stadiums'].map((stadium: any) => { return { id: stadium.id, name: stadium.name } });
-  //     setData(stadiums);
-  //   }
-  // });
-
-  let stadiums: Array<Stadium> = Array.from(Array(32).keys()).map((stadiumNumber) => { return { id: stadiumNumber, name: `Stadium ${stadiumNumber}` } })
-  setData(stadiums);
-}
-
-function fetchRefs(setData: ReactCallback<Array<string>>) {
-  let refs = [
-    "Ivan Barton",
-    "Chris Beath",
-    "Raphael Claus",
-    "Matthew Conger",
-    "Ismail Elfath",
-    "Mario Escobar",
-    "Alireza Faghani",
-    "Stephanie Frappart",
-  ];
-
-  setData(refs);
-}
-
-function dropDown<T>(
-  currentChoice: string,
-  options: Array<string>,
-  placeHolder: string,
-  width: string,
-  changeSelected: ReactCallback<string>,
-) {
-  return (
-    <Box width={width}>
-      <TextField
-        select
-        label={placeHolder}
-        value={currentChoice}
-        fullWidth
-        onChange={(e) => { changeSelected(e.target.value); }
-        }
-      >
-        {options?.map((option, index) => (<MenuItem value={option} key={index}> {option} </MenuItem>))}
-      </TextField>
-    </Box>
-  );
-}
-
-function matchDate(date: Date, setDate: ReactCallback<Date>) {
-  return (
-    <Box width='200px'>
-      <DatePicker
-        label='Match date'
-        renderInput={(params: any) => <TextField {...params} />}
-        value={date}
-        onChange={(newValue) => { setDate(newValue!!); }}
-      />
-    </Box>
-  );
-}
-
-function matchTime(date: Date, setTime: ReactCallback<Date>) {
-  return (
-    <Box width='200px'>
-      <TimePicker
-        label='Match time'
-        renderInput={(params: any) => <TextField {...params} />}
-        value={date}
-        onChange={(newValue) => { setTime(newValue!!); }}
-      >
-      </TimePicker>
-    </Box>
-  );
+  axios.post(
+    'api/match/create', 
+    postData,
+    { headers: authHeader() }
+  ).then((response) => {
+    console.log(response);
+    if (response.status === 200) {
+      alert('Match created successfully');
+    } else {
+      alert('Error creating match')
+    }
+  }).catch((error) => {
+    alert("Request failed :(\nPlease make sure the data is valid")
+  });
 }
