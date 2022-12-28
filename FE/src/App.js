@@ -36,7 +36,7 @@ const App = () => {
             <Route exact path="/CreateMatch">
                 <CreateMatch></CreateMatch>
             </Route>
-            <Route path="/EditMatch/*">
+            <Route path="/EditMatch/:matchId">
                 <EditMatch></EditMatch>
             </Route>
             <Route path="*">

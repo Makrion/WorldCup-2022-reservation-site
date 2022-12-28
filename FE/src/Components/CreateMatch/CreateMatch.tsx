@@ -37,49 +37,6 @@ export default function CreateMatch() {
         fetchTeams(setTeams);
         fetchRefs(setRefs);
         fetchStadiums(setStadiums);
-
-        let mock = ` {
-            "id": 12,
-            "team_1": 5,
-            "team_2": 4,
-            "stadium_name": "el salam",
-            "stadium_shape": "square",
-            "main_ref": "rodregez alvarez",
-            "lineman_1": "robben",
-            "lineman_2": "gonzalez",
-            "no_total_seats": 32000,
-            "no_reserved_seats": 21546,
-            "no_rows_in_vip": 4,
-            "no_seats_per_row": 40,
-            "match_date": 975764735,
-            "reserved_vip_seats": [
-                {
-                    "seat_row": 2,
-                    "seat_number": [
-                        156
-                    ]
-                },
-                {
-                    "seat_row": 3,
-                    "seat_number": [
-                        156
-                    ]
-                },
-                {
-                    "seat_row": 14,
-                    "seat_number": [
-                        1,
-                        2,
-                        6,
-                        16,
-                        156
-                    ]
-                }
-            ]
-        }`
-
-        let data = JSON.parse(mock)
-        console.log(data)
       },
       2000
     )
@@ -108,14 +65,15 @@ export default function CreateMatch() {
   const enableCreateMatchButton: () => boolean = () => {
     let enable = team1.length > 0
       && team2.length > 0
-      && stadium.id > 0
+      && stadium.id >= 0
       && mainRef.length > 0
       && firstLineRef.length > 0
       && secondLineRef.length > 0
       && team1 !== team2
       && mainRef !== firstLineRef 
       && mainRef !== secondLineRef
-      && firstLineRef !== secondLineRef;
+      && firstLineRef !== secondLineRef
+      && date.getTime()> Date.now();
 
       return enable;
   };
