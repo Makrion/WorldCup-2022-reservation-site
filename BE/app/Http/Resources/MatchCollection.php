@@ -26,7 +26,7 @@ class MatchCollection extends ResourceCollection
             $next_page = $this->currentPage() + 1 ;
         }
         return [
-            "users" => MatchResource::Collection($this->collection),
+            "matches" => MatchResource::Collection($this->collection),
             'count' => $this->count(),
             'next_page' => $next_page
             ];

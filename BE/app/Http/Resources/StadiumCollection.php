@@ -26,7 +26,7 @@ class StadiumCollection extends ResourceCollection
             $next_page = $this->currentPage() + 1 ;
         }
         return [
-            "users" => StadiumResource::Collection($this->collection),
+            "stadiums" => StadiumResource::Collection($this->collection),
             'count' => $this->count(),
             'next_page' => $next_page
             ];
