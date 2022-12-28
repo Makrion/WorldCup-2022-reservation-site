@@ -28,7 +28,7 @@ const App = () => {
             <Route path="/AdminPanel">
                 <AdminPanel></AdminPanel>
             </Route>
-            <Route exact path="/create_match">
+            <Route exact path="/CreateMatch">
                 <CreateMatch></CreateMatch>
             </Route>
             <Route path="*">

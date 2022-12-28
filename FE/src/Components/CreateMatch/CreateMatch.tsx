@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, TextField, MenuItem } from '@mui/material';
+import { Box, TextField, MenuItem, Button } from '@mui/material';
 import { DatePicker, LocalizationProvider, TimePicker} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
@@ -97,12 +97,14 @@ export function CreateMatch() {
                     </div>
                 </div>
 
-                <button
+                <Button
                     onClick={() => createMatchRequest(team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date)}
-                    style={{ width: '420px', marginBottom: '20px' }}
+                    style={{width: '420px', borderRadius: 2}}
+                    variant="outlined"
+                    fullWidth
                 > 
-                    Create Match 
-                </button>
+                    Create Match
+                </Button>
 
             </div>
             }
