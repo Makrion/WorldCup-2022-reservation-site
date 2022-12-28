@@ -8,13 +8,13 @@ import NotFound from './Components/NotFound/NotFound'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import CreateMatch from './Components/CreateMatch/CreateMatch'
 import EditMatch from './Components/EditMatch/EditMatch'
+import ViewMatch from './Components/ViewMatch/ViewMatch'
+import ViewAllMatches from './Components/ViewAllMatches/ViewAllMatches'
 
 import axios from 'axios';
 axios.defaults.baseURL = 'http://localhost:8000';
 
 const App = () => {                           
-
-
   return (
     <Router>
       <div className="App">
@@ -41,6 +41,12 @@ const App = () => {
             </Route>
             <Route path="/EditMatch/:matchId">
                 <EditMatch></EditMatch>
+            </Route>
+            <Route path="/ViewAllMatches">
+                <ViewAllMatches></ViewAllMatches>
+            </Route>
+            <Route path="/ViewMatch/:matchId">
+                <ViewMatch></ViewMatch>
             </Route>
             <Route path="*">
               <NotFound></NotFound>

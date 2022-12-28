@@ -20,7 +20,7 @@ const Navbar  = () => {
          </div>
          <div className="links">
             <Link to="/">Home</Link>
-            <Link to="/View" >View Matches</Link>
+            <Link to="/ViewAllMatches" >View Matches</Link>
             {!isLoggedIn && <Link to="/Profile">Profile</Link>}
 
             {(isLoggedIn)?

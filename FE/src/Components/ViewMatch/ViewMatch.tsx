@@ -109,19 +109,19 @@ export default function ViewMatch() {
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
-              <h4 style={{textAlign:'center'}}>Team 1</h4>
+              <h4 style={{textAlign:'center', fontWeight: 300}}>Team 1</h4>
               <h2>{team1Name}</h2>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', padding: 10}}>
-            <h4 style={{textAlign:'center'}}>Team 2</h4>
+            <h4 style={{textAlign:'center', fontWeight: 300 }}>Team 2</h4>
             <h2>{team2Name}</h2>
           </div>
         </div>
 
 
         <div style={{ display: 'flex', flexDirection: 'column', padding: '10px', alignItems: 'center' }}>
-            <h4>Stadium</h4>
+            <h4 style={{fontWeight: 300}}>Stadium</h4>
             <h2>{stadium.name}</h2>
         </div>
 
@@ -134,23 +134,23 @@ export default function ViewMatch() {
             justifyContent: 'center', 
           }}
         >
-          <h4>Match Date</h4>
+          <h4 style={{fontWeight: 300}}>Match Date</h4>
           <h2>{date.toUTCString()}</h2>
         </div>
 
         <div style={{ display: 'flex', padding: '10px', alignItems: 'center', flexDirection: 'column' }}>
-          <h4>Main Referee</h4>
+          <h4 style={{fontWeight: 300}}>Main Referee</h4>
           <h2>{mainRef}</h2>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', padding: 10, alignContent: 'center'}}>
           <div style={{ display: 'flex', flexDirection: 'column', padding: 10, alignItems: 'center'}}>
-            <h4>First Line Referee</h4>
+            <h4 style={{fontWeight: 300}}>First Line Referee</h4>
             <h2>{firstLineRef}</h2>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', padding: 10, alignItems: 'center'}}>
-            <h4>Second Line Referee</h4>
+            <h4 style={{fontWeight: 300}}>Second Line Referee</h4>
             <h2>{secondLineRef}</h2>
           </div>
         </div>

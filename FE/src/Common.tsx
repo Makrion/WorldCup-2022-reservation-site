@@ -16,9 +16,13 @@ export type Stadium = {
 
 export function loading() {
   return (
-    <h1>
-      Loading ...
-    </h1>
+    <div style={{padding: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh'}}>
+
+      <h1>
+        Loading ...
+      </h1>
+
+    </div>
   )
 }
 
