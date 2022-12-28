@@ -42,6 +42,10 @@ class UserController extends Controller
         if (!$user) {
             return $this->messageResponse('not found', '404');
         }
+        //verify users accounts
+        if ($user->role == 2){
+            $user->markEmailAsVerified();
+        }
 
         $userService->grantAccessToken($user);
 

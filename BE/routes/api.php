@@ -24,9 +24,7 @@ Route::post('/user/index', [UserController::class,'index'])->middleware('auth:ap
 Route::post('/user/index/unverified', [UserController::class,'index_unverified'])->middleware('auth:api');
 
 # manager routes
-
-# match routes
-
-# stadium routes
-
-# ticket routes
+Route::post('/match/create', [MatchTableController::class,'create'])->middleware('auth:api', 'verified');
+Route::put('/match/update/{id}', [MatchTableController::class,'update'])->middleware('auth:api', 'verified');
+// Route::get('/matches', [MatchTableController::class,'index']);
+// Route::get('/matches', [MatchTableController::class,'index']);
