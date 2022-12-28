@@ -1,16 +1,19 @@
 import './style/main/index.css';  
 import { Link } from 'react-router-dom'
-import audio from './style/Fifa.mp3'
+import {  useDispatch } from 'react-redux';
+import { SetInferredRole } from '../../States/HomeState/HomeSlice';
+//import audio from './style/Fifa.mp3'
 
 const Home  = () => {
+  const dispatch = useDispatch();
+  const setInferredRole =(payload)=> dispatch(SetInferredRole(payload));
 
 
    // pause sound on click
     const handleClick = () => {
       // play sound on click
-      let Fifa = new Audio(audio)
-      Fifa.play()
-
+      //let Fifa = new Audio(audio)
+      //Fifa.play()
     }
 
    return ( 
@@ -24,34 +27,43 @@ const Home  = () => {
             </p>
           </div>
           <div className="cards">
-            <div className="card" onClick={()=>handleClick()}>
+          <Link to="/SignUp" style={{
+            textDecoration: 'none',
+          }}>
+            <div className="card" onClick={()=>{setInferredRole('Coach')}}>
               <img className="img-card" src="./coach.jpeg" alt="" />
               <div className="card-body">
               <h3 className="card-title">I'm a Coach</h3>
               <p className="card-description">
                 As a coach, you can create and manage match events of real-world matches. 
               </p>
-              <Link to="#" className="card-link">Learn More</Link>
               </div>
               <div className="card-button-container">
               <button className="card-button"> Sign Up as a Coach</button>
               </div>
             </div>
+            </Link>
 
-            <div className="card" onClick={()=>handleClick()}>
+            <Link to="/SignUp" style={{
+            textDecoration: 'none',
+          }}>
+            <div className="card" onClick={()=>{setInferredRole('Fan')}}>
               <img className="img-card" src="./fan.jpeg" alt="" />
               <div className="card-body">
               <h3 className="card-title">I'm a Fan</h3>
               <p className="card-description">
               As a fan, you can book your ticket to attend real-world match events around you. 
               </p>
-              <Link to="#" className="card-link">Learn More</Link>
               </div>
               <div className="card-button-container">
               <button className="card-button"> Sign Up as a Fan</button>
               </div>
             </div>
+            </Link>
 
+            <Link to="/View" style={{
+            textDecoration: 'none',
+          }}>
             <div className="card" onClick={()=>handleClick()}>
               <img className="img-card" src="./guest.jpeg" alt="" />
               <div className="card-body">
@@ -59,16 +71,21 @@ const Home  = () => {
               <p className="card-description">
                 As a guest, you can view every match and know its latest updates.
               </p>
-              <Link to="#" className="card-link">Learn More</Link>
               </div>
               <div className="card-button-container">
               <button className="card-button"> View Matches</button>
               </div>
             </div>
+            </Link>
           </div>
+          <Link to="/SignIn" style={{
+            textDecoration: 'none',
+          }}>
           <div className="button-container">
               <button className="normal-button"> I'm already Registered </button>
           </div>
+          </Link>
+
         </div>
       </section>
   

@@ -1,10 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap")
 :root 
-	--primary-color: #088F8F
+	--primary-color: #23359d
+
 * 
 	margin: 0 
 	font-family: "Poppins", serif
-	color: #333 
+	
 .navbar 
 	padding: 20px 
 	display: flex 
@@ -13,6 +14,7 @@
 	border-bottom: 1px solid #e9e9e9 
 	.logo
 		display: flex
+		cursor: pointer
 		.img-logo
 			height: 2rem
 			filter: invert(25%) sepia(98%) saturate(2916%) hue-rotate(165deg) brightness(101%) contrast(94%)
@@ -24,6 +26,7 @@
 		margin-left: auto 
 	a 
 		margin-left: 16px 
+		color: var(--primary-color)
 		text-decoration: none 
 		padding: 6px 
 		&:hover 
