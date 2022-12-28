@@ -95,15 +95,6 @@ function SignUp() {
       newErrors.email = '';
     }
 
-    /*
-    if (!values.country) {
-      isValid = false;
-      newErrors.country = 'Country is required';
-    } else {
-      newErrors.country = '';
-    }
-    */
-
     if (!values.password) {
       isValid = false;
       newErrors.password = 'Password is required';
@@ -199,11 +190,11 @@ function SignUp() {
           error={Boolean(errors.country)}
         >
 
-          <MenuItem value="Egypt">Egypt</MenuItem>
-          <MenuItem value="USA">USA</MenuItem>
-          <MenuItem value="UK">UK</MenuItem>
-          <MenuItem value="France">France</MenuItem>
-          <MenuItem value="Germany">Germany</MenuItem>
+         <MenuItem value="Egypt">Egypt</MenuItem>
+         <MenuItem value="USA">USA</MenuItem>
+         <MenuItem value="UK">UK</MenuItem>
+         <MenuItem value="France">France</MenuItem>
+         <MenuItem value="Germany">Germany</MenuItem>
          <MenuItem value="China">China</MenuItem>
          <MenuItem value="Japan">Japan</MenuItem>
          <MenuItem value="India">India</MenuItem>

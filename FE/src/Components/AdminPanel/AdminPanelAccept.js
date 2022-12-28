@@ -39,7 +39,10 @@ function AdminPanelAccept() {
       },
     ];
   return (
-    <List>
+    <List style={{
+      marginLeft: '10px',
+      marginRight: '10px',
+    }}>
       {items.map((item) => (
         <ListItem key={item.id}>
           <ListItemIcon>

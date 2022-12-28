@@ -1,6 +1,7 @@
 import Navbar from './Components/NavBar/NavBar'
 import Home from './Components/Home/Home'
 import SignUp from './Components/SignUp/SignUp'
+import Profile from './Components/Profile/Profile'
 import SignIn from './Components/SignIn/SignIn'
 import AdminPanel from './Components/AdminPanel/AdminPanel'
 import NotFound from './Components/NotFound/NotFound'
@@ -24,6 +25,9 @@ const App = () => {
             </Route>
             <Route path="/SignIn">
                 <SignIn></SignIn>
+            </Route>
+            <Route path="/Profile">
+                <Profile></Profile>
             </Route>
             <Route path="/AdminPanel">
                 <AdminPanel></AdminPanel>
