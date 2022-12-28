@@ -21,7 +21,7 @@ const Navbar  = () => {
       if(logoutSuccess){
          history.push("/");
       }
-   }, [logoutSuccess, history]);
+   }, [logoutSuccess, isLoggedIn, history]);
 
    useEffect(() => {
       if(logoutError){
