@@ -4,6 +4,8 @@ import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-picker
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios'
 
+const auth_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNzVlMDIyNWQxMDgxNDM5NDAzN2NhMmI4Y2E1MTBjZGI0OGU4NTEzZjU3ZjczNDIxN2NlYjBlNGExMjRkNWNlOTU0YzhkODg4NDYzNmM4MzMiLCJpYXQiOjE2NzIyMzc1OTkuMzE3ODA5LCJuYmYiOjE2NzIyMzc1OTkuMzE3ODExLCJleHAiOjE3MDM3NzM1OTkuMzE0MDQ3LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.PfQt3tjvQxuwxtP01LdtVImLBZo_TQOouzOtwPyWFC4w34YOfoywmhcIpZZDq-MP4hrKzziENZ4yKoWt49_yrFuyZG453J8-e8Tay6_4HgpM_LIqZyewt2VKYt48ohQG_5erU3IQ-Ne-mBBDjNrSrH717Q2beGvKDwkafeLZrryw6EU6UEyPmZYfxLeM47vhtvYlOULcZGTXptPiJRxnmTXpIGODjtxiuLEv59K8GoIoSsXFB0P5yniJ24u7hh2mjJY8sgINr-95oInxR85_oWU2AOXxVRis7siT5hpoY4j9rX5pAGl0jKvqQ3AwwN49ZibRYKM7prYavT_arpz4JxOwaRC_A01mmpQXOSmbpWvTcJSiGe98Y_szrdPip5XkQscTZcMZEK5FtJoSR0l05AGwqXLQccEM7hWYFy2P1JRq0yJiCfPNCrFSF6w98mZvavsQldzXGmcFQTFDjuePrq1aDcD_FVD27xm6WS9ukjg9VlTT02yLkL2V9PnO5fYQ068z028-eZGxmzxVMLbNQz0CT5ZJ3vx3buF3t0zicU4f80R5uEg7j3w2L0M3anb4N2rxI2_FSEuypzHBllIvCcO29gaaIuoqENSASDY0VwPzik0dsvkUXOTIl9RGliB0jyM5G0Zy02jHIZ3p4hEQgLhDvDi7zobxiS2BYFvIHKo';
+
 type ReactCallback<T> = React.Dispatch<React.SetStateAction<T>>;
 
 type Stadium = {
@@ -25,7 +27,12 @@ export default function CreateMatch() {
   const [mainRef, setMainRef] = useState('');
   const [firstLineRef, setFirstLineRef] = useState('');
   const [secondLineRef, setSecondLineRef] = useState('');
-  const [date, setDate] = useState(new Date());
+
+
+  const defaultDate = new Date();
+  defaultDate.setDate(defaultDate.getDate() + 1);
+  defaultDate.setHours(defaultDate.getHours() + 1);
+  const [date, setDate] = useState(defaultDate);
 
   const [stadiums, setStadiums] = useState(new Array<Stadium>());
   const [teams, setTeams] = useState(new Array<string>());
@@ -73,7 +80,7 @@ export default function CreateMatch() {
       && mainRef !== firstLineRef 
       && mainRef !== secondLineRef
       && firstLineRef !== secondLineRef
-      && date.getTime()> Date.now();
+      && date.getTime() > Date.now();
 
       return enable;
   };
@@ -189,26 +196,37 @@ function createMatchRequest(
   console.log(secondLineRef);
   console.log(time);
 
-  // axios.post(
-  //   'api/match/create', {
-  //     "team_1": t1,
-  //     "team_2": t2,
-  //     "main_ref": mainRef,
-  //     "lineman_1": firstLineRef,
-  //     "lineman_2": secondLineRef,
-  //     "match_date": time,
-  //     "stadium_id": stadium_id
-  //   }
-  // ).then((response) => {
-  //   if (response.status === 200) {
-  //     alert('Match created successfully');
-  //     clearData();
-  //   } else {
-  //     alert('Error creating match')
-  //   }
-  // });
+  let postData = {
+    "team_1": t1,
+    "team_2": t2,
+    "main_ref": mainRef,
+    "lineman_1": firstLineRef,
+    "lineman_2": secondLineRef,
+    "match_date": time,
+    "stadium_id": stadium_id
+  };
 
-  clearData();
+  console.log(postData);
+
+  axios.post(
+    'api/match/create', 
+    postData,
+    {
+      headers: {
+        "Authorization": `Bearer ${auth_token}`
+      }
+    }
+  ).then((response) => {
+    console.log(response);
+    if (response.status === 200) {
+      alert('Match created successfully');
+      clearData();
+    } else {
+      alert('Error creating match')
+    }
+  }).catch((error) => {
+    alert("Request failed :(\nPlease make sure the data is valid")
+  });
 }
 
 
@@ -218,21 +236,26 @@ function fetchTeams(setTeams: ReactCallback<Array<string>>){
 }
 
 function fetchStadiums(setData: ReactCallback<Array<Stadium>>) {
-  // axios.get('api/stadiums', {
-  //   params: {
-  //     page_size: 32,
-  //     current_page: 1
-  //   }
-  // }).then((response) => {
-  //   if (response.status === 200) {
-  //     let res = response.data.json();
-  //     let stadiums = res['stadiums'].map((stadium: any) => { return { id: stadium.id, name: stadium.name } });
-  //     setData(stadiums);
-  //   }
-  // });
+  axios.get('api/stadiums', 
+  {
+      params: {
+        page_size: 32,
+        current_page: 1
+      },
+      headers: {
+        "Authorization": `Bearer ${auth_token}`
+      }
+    }
+  ).then((response) => {
+    if (response.status === 200) {
+      let data = response.data;
+      let stadiums = data['stadiums'].map((stadium: any) => { return { id: stadium.id, name: stadium.name } });
+      setData(stadiums);
+    }
+  });
 
-  let stadiums: Array<Stadium> = Array.from(Array(32).keys()).map((stadiumNumber) => { return { id: stadiumNumber, name: `Stadium ${stadiumNumber}` } })
-  setData(stadiums);
+  // let stadiums: Array<Stadium> = Array.from(Array(32).keys()).map((stadiumNumber) => { return { id: stadiumNumber, name: `Stadium ${stadiumNumber}` } })
+  // setData(stadiums);
 }
 
 function fetchRefs(setData: ReactCallback<Array<string>>) {
@@ -280,7 +303,7 @@ function matchDate(date: Date, setDate: ReactCallback<Date>) {
         label='Match date'
         renderInput={(params: any) => <TextField {...params} />}
         value={date}
-        onChange={(newValue) => { setDate(newValue!!); }}
+        onChange={(newValue) => { setDate(new Date(newValue!!.toString())); }}
       />
     </Box>
   );
@@ -293,7 +316,7 @@ function matchTime(date: Date, setTime: ReactCallback<Date>) {
         label='Match time'
         renderInput={(params: any) => <TextField {...params} />}
         value={date}
-        onChange={(newValue) => { setTime(newValue!!); }}
+        onChange={(newValue) => { setTime(new Date(newValue!!.toString())); }}
       >
       </TimePicker>
     </Box>

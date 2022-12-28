@@ -9,6 +9,9 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import CreateMatch from './Components/CreateMatch/CreateMatch'
 import EditMatch from './Components/EditMatch/EditMatch'
 
+import axios from 'axios';
+axios.defaults.baseURL = 'http://localhost:8000';
+
 const App = () => {                           
 
 
