@@ -3,7 +3,9 @@ import { Box, TextField, MenuItem, Button } from '@mui/material';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useParams } from 'react-router-dom';
+
 import axios from 'axios'
+import { authHeader } from "../../auth";
 
 type ReactCallback<T> = React.Dispatch<React.SetStateAction<T>>;
 
@@ -11,6 +13,7 @@ type Stadium = {
   id: number
   name: string
 };
+
 
 let mock = ` {
             "id": 12,
@@ -53,7 +56,7 @@ let mock = ` {
         }`
 export default function EditMatch() {
 
-  const { matchId } = useParams();
+  let { matchId } = useParams();
 
   const defaultStadium: Stadium = {
     id: 0,
@@ -80,42 +83,50 @@ export default function EditMatch() {
         fetchTeams(setTeams);
         fetchRefs(setRefs);
         fetchStadiums(setStadiums);
+
       },
       2000
     )
   }, []);
 
   useEffect(() => {
-    if(!(stadiums.length > 0 && teams.length > 0 && refs.length > 0)) return;
+    if(!stadiums || stadiums.length === 0) return;
 
-    let data = JSON.parse(mock);
-    console.log(data)
+    axios
+      .get(`api/match/${matchId}`, {})
+      .then((response) => {
+        console.log(response)
+        console.log(stadiums)
+        if (response.status === 200) {
+          let data = response.data;
 
-    let t1Id = data['team_1'];
-    let t2Id = data['team_2'];
+          let t1Id = data['team_1'];
+          let t2Id = data['team_2'];
 
-    let stadium_name: string = data['stadium_name'];
-    let stadium_id = stadiums.find((s) => s.name = stadium_name)!.id
-    let stadium: Stadium = { id: stadium_id, name: stadium_name };
+          let stadium_name: string = data['stadium_name'];
+          let stadium_id = stadiums.find((s) => s.name = stadium_name)!.id
+          let stadium: Stadium = { id: stadium_id, name: stadium_name };
 
-    let ref: string = data['main_ref'];
-    let firstRef: string = data['lineman_1'];
-    let secondRef: string = data['lineman_2'];
+          let ref: string = data['main_ref'];
+          let firstRef: string = data['lineman_1'];
+          let secondRef: string = data['lineman_2'];
 
-    let matchDate: Date = new Date(0);
-    matchDate.setUTCSeconds(data['match_date']);
+          let matchDate: Date = new Date(0);
+          matchDate.setUTCSeconds(data['match_date']);
 
-    setTeam1(`Team ${t1Id}`);
-    setTeam2(`Team ${t2Id}`);
+          setTeam1(`Team ${t1Id}`);
+          setTeam2(`Team ${t2Id}`);
 
-    setStadium(stadium);
+          setStadium(stadium);
 
-    setMainRef(ref);
-    setFirstLineRef(firstRef);
-    setSecondLineRef(secondRef);
+          setMainRef(ref);
+          setFirstLineRef(firstRef);
+          setSecondLineRef(secondRef);
 
-    setDate(matchDate);
-  }, [stadiums, teams, refs])
+          setDate(matchDate);
+        }
+      });
+  }, [stadiums]);
 
   useEffect(
     () => {
@@ -125,7 +136,7 @@ export default function EditMatch() {
       setIsLoading(!allLoaded);
     },
     [teams, stadiums, refs]
-  )
+  );
 
   const clearData = () => {
     setTeam1('');
@@ -219,7 +230,7 @@ export default function EditMatch() {
         </div>
 
         <Button
-          onClick={() => createMatchRequest(team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, clearData)}
+          onClick={() => createMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, clearData)}
           style={{ width: '420px', borderRadius: 2 }}
           variant="outlined"
           fullWidth
@@ -243,6 +254,7 @@ function loading() {
 }
 
 function createMatchRequest(
+  matchId: string,
   team1: string,
   team2: string,
   stadium: Stadium,
@@ -265,26 +277,28 @@ function createMatchRequest(
   console.log(secondLineRef);
   console.log(time);
 
-  // axios.post(
-  //   'api/match/create', {
-  //     "team_1": t1,
-  //     "team_2": t2,
-  //     "main_ref": mainRef,
-  //     "lineman_1": firstLineRef,
-  //     "lineman_2": secondLineRef,
-  //     "match_date": time,
-  //     "stadium_id": stadium_id
-  //   }
-  // ).then((response) => {
-  //   if (response.status === 200) {
-  //     alert('Match created successfully');
-  //     clearData();
-  //   } else {
-  //     alert('Error creating match')
-  //   }
-  // });
-
-  clearData();
+  axios.put(
+    `api/match/update/${matchId}`, {
+      "team_1": t1,
+      "team_2": t2,
+      "main_ref": mainRef,
+      "lineman_1": firstLineRef,
+      "lineman_2": secondLineRef,
+      "match_date": time,
+      "stadium_id": stadium_id
+    },
+    {
+      headers: authHeader()
+    }
+  ).then((response) => {
+    if (response.status === 200) {
+      alert('Match updated successfully');
+    } else {
+      alert('Error updating match')
+    }
+  }).catch((e) => {
+    alert('Sorry, an error occurred :(');
+  });
 }
 
 
@@ -294,21 +308,21 @@ function fetchTeams(setTeams: ReactCallback<Array<string>>) {
 }
 
 function fetchStadiums(setData: ReactCallback<Array<Stadium>>) {
-  // axios.get('api/stadiums', {
-  //   params: {
-  //     page_size: 32,
-  //     current_page: 1
-  //   }
-  // }).then((response) => {
-  //   if (response.status === 200) {
-  //     let res = response.data.json();
-  //     let stadiums = res['stadiums'].map((stadium: any) => { return { id: stadium.id, name: stadium.name } });
-  //     setData(stadiums);
-  //   }
-  // });
-
-  let stadiums: Array<Stadium> = Array.from(Array(32).keys()).map((stadiumNumber) => { return { id: stadiumNumber, name: `Stadium ${stadiumNumber}` } })
-  setData(stadiums);
+  axios.get('api/stadiums', 
+  {
+      params: {
+        page_size: 32,
+        current_page: 1
+      },
+      headers: authHeader()
+  }
+  ).then((response) => {
+    if (response.status === 200) {
+      let data = response.data;
+      let stadiums = data['stadiums'].map((stadium: any) => { return { id: stadium.id, name: stadium.name } });
+      setData(stadiums);
+    }
+  });
 }
 
 function fetchRefs(setData: ReactCallback<Array<string>>) {
@@ -321,6 +335,9 @@ function fetchRefs(setData: ReactCallback<Array<string>>) {
     "Mario Escobar",
     "Alireza Faghani",
     "Stephanie Frappart",
+    "Lyric Hegmann",
+    "Dr. Jeremie Huel",
+    "Vidal Gottlieb"
   ];
 
   setData(refs);
@@ -372,11 +389,10 @@ function matchTime(date: Date, setTime: ReactCallback<Date>) {
         renderInput={(params: any) => <TextField {...params} />}
         value={date}
         onChange={(newValue) => { 
-          setTime(newValue!!); 
+          setTime(new Date(newValue!!.toString())); 
         }}
       >
       </TimePicker>
     </Box>
   );
 }
-

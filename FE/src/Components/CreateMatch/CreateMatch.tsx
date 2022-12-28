@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, TextField, MenuItem, Button } from '@mui/material';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { authHeader } from "../../auth";
 import axios from 'axios'
-
-const auth_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNzVlMDIyNWQxMDgxNDM5NDAzN2NhMmI4Y2E1MTBjZGI0OGU4NTEzZjU3ZjczNDIxN2NlYjBlNGExMjRkNWNlOTU0YzhkODg4NDYzNmM4MzMiLCJpYXQiOjE2NzIyMzc1OTkuMzE3ODA5LCJuYmYiOjE2NzIyMzc1OTkuMzE3ODExLCJleHAiOjE3MDM3NzM1OTkuMzE0MDQ3LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.PfQt3tjvQxuwxtP01LdtVImLBZo_TQOouzOtwPyWFC4w34YOfoywmhcIpZZDq-MP4hrKzziENZ4yKoWt49_yrFuyZG453J8-e8Tay6_4HgpM_LIqZyewt2VKYt48ohQG_5erU3IQ-Ne-mBBDjNrSrH717Q2beGvKDwkafeLZrryw6EU6UEyPmZYfxLeM47vhtvYlOULcZGTXptPiJRxnmTXpIGODjtxiuLEv59K8GoIoSsXFB0P5yniJ24u7hh2mjJY8sgINr-95oInxR85_oWU2AOXxVRis7siT5hpoY4j9rX5pAGl0jKvqQ3AwwN49ZibRYKM7prYavT_arpz4JxOwaRC_A01mmpQXOSmbpWvTcJSiGe98Y_szrdPip5XkQscTZcMZEK5FtJoSR0l05AGwqXLQccEM7hWYFy2P1JRq0yJiCfPNCrFSF6w98mZvavsQldzXGmcFQTFDjuePrq1aDcD_FVD27xm6WS9ukjg9VlTT02yLkL2V9PnO5fYQ068z028-eZGxmzxVMLbNQz0CT5ZJ3vx3buF3t0zicU4f80R5uEg7j3w2L0M3anb4N2rxI2_FSEuypzHBllIvCcO29gaaIuoqENSASDY0VwPzik0dsvkUXOTIl9RGliB0jyM5G0Zy02jHIZ3p4hEQgLhDvDi7zobxiS2BYFvIHKo';
 
 type ReactCallback<T> = React.Dispatch<React.SetStateAction<T>>;
 
@@ -211,16 +210,11 @@ function createMatchRequest(
   axios.post(
     'api/match/create', 
     postData,
-    {
-      headers: {
-        "Authorization": `Bearer ${auth_token}`
-      }
-    }
+    { headers: authHeader() }
   ).then((response) => {
     console.log(response);
     if (response.status === 200) {
       alert('Match created successfully');
-      clearData();
     } else {
       alert('Error creating match')
     }
@@ -242,10 +236,8 @@ function fetchStadiums(setData: ReactCallback<Array<Stadium>>) {
         page_size: 32,
         current_page: 1
       },
-      headers: {
-        "Authorization": `Bearer ${auth_token}`
-      }
-    }
+      headers: authHeader()
+  }
   ).then((response) => {
     if (response.status === 200) {
       let data = response.data;
@@ -273,7 +265,7 @@ function fetchRefs(setData: ReactCallback<Array<string>>) {
   setData(refs);
 }
 
-function dropDown<T>(
+function dropDown(
   currentChoice: string,
   options: Array<string>,
   placeHolder: string,
