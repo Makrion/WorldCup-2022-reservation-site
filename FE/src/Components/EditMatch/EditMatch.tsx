@@ -1,62 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Box, TextField, MenuItem, Button } from '@mui/material';
-import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useParams } from 'react-router-dom';
-
 import axios from 'axios'
+import React, { useEffect, useState } from "react";
+
+import { Button } from '@mui/material';
+import { LocalizationProvider} from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useParams, useHistory  } from 'react-router-dom';
+
 import { authHeader } from "../../auth";
+import { dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from '../../Common';
 
-type ReactCallback<T> = React.Dispatch<React.SetStateAction<T>>;
-
-type Stadium = {
-  id: number
-  name: string
-};
-
-
-let mock = ` {
-            "id": 12,
-            "team_1": 5,
-            "team_2": 4,
-            "stadium_name": "Stadium 1",
-            "stadium_shape": "square",
-            "main_ref": "Ivan Barton",
-            "lineman_1": "Chris Beath",
-            "lineman_2": "Raphael Claus",
-            "no_total_seats": 32000,
-            "no_reserved_seats": 21546,
-            "no_rows_in_vip": 4,
-            "no_seats_per_row": 40,
-            "match_date": 975764735,
-            "reserved_vip_seats": [
-                {
-                    "seat_row": 2,
-                    "seat_number": [
-                        156
-                    ]
-                },
-                {
-                    "seat_row": 3,
-                    "seat_number": [
-                        156
-                    ]
-                },
-                {
-                    "seat_row": 14,
-                    "seat_number": [
-                        1,
-                        2,
-                        6,
-                        16,
-                        156
-                    ]
-                }
-            ]
-        }`
 export default function EditMatch() {
 
-  let { matchId } = useParams();
+  let { matchId } = useParams<{ matchId?: string }>();
+  const history = useHistory();
+
+  if(!Number.parseInt(matchId!!)) {
+    history.push('/NotFound');
+  }
 
   const defaultStadium: Stadium = {
     id: 0,
@@ -78,26 +38,18 @@ export default function EditMatch() {
   const [refs, setRefs] = useState(new Array<string>());
 
   useEffect(() => {
-    setTimeout(
-      () => {
-        fetchTeams(setTeams);
-        fetchRefs(setRefs);
-        fetchStadiums(setStadiums);
-
-      },
-      2000
-    )
+    fetchTeams(setTeams);
+    fetchRefs(setRefs);
+    fetchStadiums(setStadiums);
   }, []);
 
   useEffect(() => {
-    if(!stadiums || stadiums.length === 0) return;
+    if (!stadiums || stadiums.length === 0) return;
 
     axios
       .get(`api/match/${matchId}`, {})
       .then((response) => {
-        console.log(response)
-        console.log(stadiums)
-        if (response.status === 200) {
+        if (response?.status === 200) {
           let data = response.data;
 
           let t1Id = data['team_1'];
@@ -125,6 +77,9 @@ export default function EditMatch() {
 
           setDate(matchDate);
         }
+      })
+      .catch((error) => {
+        history.push('/NotFound')
       });
   }, [stadiums]);
 
@@ -138,17 +93,7 @@ export default function EditMatch() {
     [teams, stadiums, refs]
   );
 
-  const clearData = () => {
-    setTeam1('');
-    setTeam2('');
-    setStadium(defaultStadium);
-
-    setMainRef('');
-    setFirstLineRef('');
-    setSecondLineRef('');
-  }
-
-  const enableCreateMatchButton: () => boolean = () => {
+  const enableEditMatchButton: () => boolean = () => {
     let enable = 
          team1.length > 0
       && team2.length > 0
@@ -230,11 +175,11 @@ export default function EditMatch() {
         </div>
 
         <Button
-          onClick={() => createMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, clearData)}
+          onClick={() => editMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date)}
           style={{ width: '420px', borderRadius: 2 }}
           variant="outlined"
           fullWidth
-          disabled={!enableCreateMatchButton()}
+          disabled={!enableEditMatchButton()}
         >
           Edit Match
         </Button>
@@ -245,15 +190,7 @@ export default function EditMatch() {
   );
 }
 
-function loading() {
-  return (
-    <h1>
-      Loading ...
-    </h1>
-  )
-}
-
-function createMatchRequest(
+function editMatchRequest(
   matchId: string,
   team1: string,
   team2: string,
@@ -262,7 +199,6 @@ function createMatchRequest(
   firstLineRef: string,
   secondLineRef: string,
   date: Date,
-  clearData: () => void
 ) {
   let t1 = Number.parseInt(team1.replace('Team ', ''));
   let t2 = Number.parseInt(team2.replace('Team ', ''));
@@ -299,100 +235,4 @@ function createMatchRequest(
   }).catch((e) => {
     alert('Sorry, an error occurred :(');
   });
-}
-
-
-function fetchTeams(setTeams: ReactCallback<Array<string>>) {
-  let teams = Array.from(Array(32).keys()).map((teamNumber) => `Team ${teamNumber}`);
-  setTeams(teams);
-}
-
-function fetchStadiums(setData: ReactCallback<Array<Stadium>>) {
-  axios.get('api/stadiums', 
-  {
-      params: {
-        page_size: 32,
-        current_page: 1
-      },
-      headers: authHeader()
-  }
-  ).then((response) => {
-    if (response.status === 200) {
-      let data = response.data;
-      let stadiums = data['stadiums'].map((stadium: any) => { return { id: stadium.id, name: stadium.name } });
-      setData(stadiums);
-    }
-  });
-}
-
-function fetchRefs(setData: ReactCallback<Array<string>>) {
-  let refs = [
-    "Ivan Barton",
-    "Chris Beath",
-    "Raphael Claus",
-    "Matthew Conger",
-    "Ismail Elfath",
-    "Mario Escobar",
-    "Alireza Faghani",
-    "Stephanie Frappart",
-    "Lyric Hegmann",
-    "Dr. Jeremie Huel",
-    "Vidal Gottlieb"
-  ];
-
-  setData(refs);
-}
-
-function dropDown<T>(
-  currentChoice: string,
-  options: Array<string>,
-  placeHolder: string,
-  width: string,
-  changeSelected: ReactCallback<string>,
-) {
-  return (
-    <Box width={width}>
-      <TextField
-        select
-        label={placeHolder}
-        value={currentChoice}
-        fullWidth
-        onChange={(e) => { changeSelected(e.target.value); }
-        }
-      >
-        {options?.map((option, index) => (<MenuItem value={option} key={index}> {option} </MenuItem>))}
-      </TextField>
-    </Box>
-  );
-}
-
-function matchDate(date: Date, setDate: ReactCallback<Date>) {
-  return (
-    <Box width='200px'>
-      <DatePicker
-        label='Edit match date'
-        renderInput={(params: any) => <TextField {...params} />}
-        value={date}
-        onChange={(newValue) => { 
-          setDate(new Date(newValue!!.toString())); 
-      }}
-      />
-    </Box>
-  );
-}
-
-function matchTime(date: Date, setTime: ReactCallback<Date>) {
-  return (
-    <Box width='200px'>
-      <TimePicker
-        label='Edit match time'
-        renderInput={(params: any) => <TextField {...params} />}
-        value={date}
-        onChange={(newValue) => { 
-          setTime(new Date(newValue!!.toString())); 
-        }}
-      >
-      </TimePicker>
-    </Box>
-  );
 }
