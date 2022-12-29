@@ -27,14 +27,12 @@ class UserRegisterRequest extends FormRequest
     {
         $genders = array('m' ,'f');
         $roles = array(1,2);
-        $min_birth_date = strtotime("1920-1-1");
-        $max_birth_date = strtotime("2018-1-1");
         return [
             'username' => 'required|string|unique:users',
             'password' => ['required', 'string', Password::min(8)],
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'birth_date' => "required|integer|min:$min_birth_date|max:$max_birth_date",
+            'birth_date' => "required|integer",
             'gender' => ['required', Rule::in($genders)],
             'email' => 'required|email|unique:users',
             'role' => ['required', Rule::in($roles)],

@@ -79,7 +79,7 @@ class UserController extends Controller
         $user = $request->user();
         $match = $userService->checkLoginCredentials($user->username, $request->old_password);
         if ($match) {
-            $userService->update(
+            $new_user = $userService->update(
             $user,
             $request->password,
             $request->first_name,
@@ -88,7 +88,7 @@ class UserController extends Controller
             $request->gender,
             $request->nationality
             );
-            return $this->messageResponse( "Successful response", '200');
+            return $this->generalResponse(new UserResource($new_user), '200');
         }
 
         return $this->messageResponse('wrong old password', '422');

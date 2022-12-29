@@ -19,4 +19,10 @@ class MatchTable extends Model
         'lineman_2',
         'stadium_id'
     ];
+
+
+    static public function get_stadium($match_id){
+        $stadium_id = MatchTable::find($match_id)->stadium_id;
+        return Stadium::find($stadium_id);
+    }
 }

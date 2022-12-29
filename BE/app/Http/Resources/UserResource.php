@@ -27,7 +27,11 @@ class UserResource extends JsonResource
             'nationality' => $this->nationality
         ];
         if($this->token()){
-            $res['access_token'] = $this->token();
+            if(is_string($this->token())){
+                $res['access_token'] = $this->token();
+                return $res;
+            }
+            $res['access_token'] = $request->bearerToken();
         }
         return $res;
     }
