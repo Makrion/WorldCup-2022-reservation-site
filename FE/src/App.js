@@ -10,6 +10,7 @@ import CreateMatch from './Components/CreateMatch/CreateMatch'
 import EditMatch from './Components/EditMatch/EditMatch'
 import ViewMatch from './Components/ViewMatch/ViewMatch'
 import ViewAllMatches from './Components/ViewAllMatches/ViewAllMatches'
+import AddStadium from './Components/AddStadium/AddStadium'
 
 import axios from 'axios';
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -42,11 +43,14 @@ const App = () => {
             <Route path="/EditMatch/:matchId">
                 <EditMatch></EditMatch>
             </Route>
-            <Route path="/ViewAllMatches">
+            <Route exact path="/ViewAllMatches">
                 <ViewAllMatches></ViewAllMatches>
             </Route>
             <Route path="/ViewMatch/:matchId">
                 <ViewMatch></ViewMatch>
+            </Route>
+            <Route exact path="/AddStadium">
+                <AddStadium></AddStadium>
             </Route>
             <Route path="*">
               <NotFound></NotFound>

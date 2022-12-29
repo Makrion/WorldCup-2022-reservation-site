@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import { useParams, useHistory } from 'react-router-dom';
 import { Button } from "@mui/material";
-import { fetchStadiums, loading, Stadium } from "../../Common";
+import { fetchStadiums, loading, mockRole, Stadium } from "../../Common";
 
 export default function ViewMatch() {
 
@@ -14,22 +14,18 @@ export default function ViewMatch() {
     history.push('/NotFound');
   }
 
-  const defaultStadium: Stadium = {
-    id: 0,
-    name: ''
-  };
-
   const [isLoading, setIsLoading] = useState(true);
 
   const [team1Name, setTeam1] = useState('');
   const [team2Name, setTeam2] = useState('');
-  const [stadium, setStadium] = useState(defaultStadium);
+  const [stadium, setStadium] = useState(Stadium.default());
   const [mainRef, setMainRef] = useState('');
   const [firstLineRef, setFirstLineRef] = useState('');
   const [secondLineRef, setSecondLineRef] = useState('');
   const [date, setDate] = useState(new Date());
 
   const [stadiums, setStadiums] = useState(new Array<Stadium>());
+
 
   useEffect(() => {
     fetchStadiums(setStadiums);
@@ -165,14 +161,18 @@ export default function ViewMatch() {
             Back
           </Button>
 
-          <Button
-            onClick={() => { history.push(`/EditMatch/${matchId}`) }}
-            style={{ borderRadius: 2, margin: '5px'}}
-            variant="outlined"
-            fullWidth
-          >
-            Edit
-          </Button>
+          {
+            (mockRole < 2)
+            &&
+            <Button
+              onClick={() => { history.push(`/EditMatch/${matchId}`) }}
+              style={{ borderRadius: 2, margin: '5px' }}
+              variant="outlined"
+              fullWidth
+            >
+              Edit
+            </Button>
+          }
         </div>
 
       </div>

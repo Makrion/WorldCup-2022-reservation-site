@@ -7,14 +7,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useParams, useHistory } from 'react-router-dom';
 
 import { authHeader } from "../../auth";
-import { dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from '../../Common';
+import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, mockRole, Stadium } from '../../Common';
 
 export default function EditMatch() {
 
   let { matchId } = useParams<{ matchId?: string }>();
+
   const history = useHistory();
 
-  if (!Number.parseInt(matchId!!)) {
+  if (!Number.parseInt(matchId!!) || mockRole >= 2) {
     history.push('/NotFound');
   }
 
@@ -37,11 +38,29 @@ export default function EditMatch() {
   const [teams, setTeams] = useState(new Array<string>());
   const [refs, setRefs] = useState(new Array<string>());
 
+
+  const [errors, setErrors] = useState({
+    team1: '',
+    team2: '',
+    stadium: '',
+    mainRef: '',
+    firstLineRef: '',
+    secondLineRef: '',
+  });
+
+  const [validInputs, setValidInputs] = useState(true);
+
   useEffect(() => {
     fetchTeams(setTeams);
     fetchRefs(setRefs);
     fetchStadiums(setStadiums);
   }, []);
+
+  useEffect(() => { !validInputs && validateInputs() }, [team1, team2, stadium, mainRef, firstLineRef, secondLineRef]);
+  const validateInputs = () => {
+    return areInputsValid(errors, team1, team2, firstLineRef, secondLineRef, mainRef, stadium, setErrors, date, setValidInputs);
+  }
+
 
   useEffect(() => {
     if (!stadiums || stadiums.length === 0) return;
@@ -93,22 +112,6 @@ export default function EditMatch() {
     [teams, stadiums, refs]
   );
 
-  const enableEditMatchButton: () => boolean = () => {
-    let enable =
-      team1.length > 0
-      && team2.length > 0
-      && stadium.id >= 0
-      && mainRef.length > 0
-      && firstLineRef.length > 0
-      && secondLineRef.length > 0
-      && team1 !== team2
-      && mainRef !== firstLineRef
-      && mainRef !== secondLineRef
-      && firstLineRef !== secondLineRef
-      && date.getTime() > Date.now()
-
-    return enable;
-  };
 
   return (
     <div>
@@ -120,17 +123,25 @@ export default function EditMatch() {
 
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
-              {dropDown(team1, teams, 'Edit Team 1', '200px', setTeam1)}
+              {dropDown(team1, teams, 'Edit Team 1', '200px', setTeam1, errors.team1)}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
-              {dropDown(team2, teams, 'Edit Team 2', '200px', setTeam2)}
+              {dropDown(team2, teams, 'Edit Team 2', '200px', setTeam2, errors.team2)}
             </div>
           </div>
 
 
           <div style={{ padding: '10px 0', }}>
-            {dropDown(stadium.name, stadiums.map((s) => s.name), 'Edit stadium', '420px', (sName) => setStadium(stadiums.find((s) => s.name === sName)!!))}
+            {
+              dropDown(stadium.name,
+                stadiums.map((s) => s.name),
+                'Edit stadium',
+                '420px',
+                (sName) => setStadium(stadiums.find((s) => s.name === sName)!!),
+                errors.stadium
+              )
+            }
           </div>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -158,16 +169,16 @@ export default function EditMatch() {
           </LocalizationProvider>
 
           <div style={{ paddingTop: '10px' }}>
-            {dropDown(mainRef, refs, 'Edit main referee', '420px', setMainRef)}
+            {dropDown(mainRef, refs, 'Edit main referee', '420px', setMainRef, errors.mainRef)}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'row', paddingTop: 20, paddingBottom: 20 }}>
             <div style={{ display: 'flex', flexDirection: 'column', paddingRight: 20 }}>
-              {dropDown(firstLineRef, refs, 'Edit first line referee', '200px', setFirstLineRef)}
+              {dropDown(firstLineRef, refs, 'Edit first line referee', '200px', setFirstLineRef, errors.firstLineRef)}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {dropDown(secondLineRef, refs, 'Edit second line referee', '200px', setSecondLineRef)}
+              {dropDown(secondLineRef, refs, 'Edit second line referee', '200px', setSecondLineRef, errors.secondLineRef)}
             </div>
           </div>
 
@@ -175,7 +186,7 @@ export default function EditMatch() {
 
             <Button
               onClick={() => { history.goBack() }}
-              style={{ borderRadius: 2, marginRight: '5px'}}
+              style={{ borderRadius: 2, marginRight: '10px'}}
               variant="contained"
               fullWidth
             >
@@ -183,11 +194,11 @@ export default function EditMatch() {
             </Button>
 
             <Button
-              onClick={() => editMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date)}
-              style={{ borderRadius: 2, marginLeft: '5px'}}
+              onClick={() => editMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, validateInputs)}
+              style={{ borderRadius: 2, marginLeft: '10px'}}
               variant="outlined"
               fullWidth
-              disabled={!enableEditMatchButton()}
+              disabled={!validInputs}
             >
               Apply Edits
             </Button>
@@ -208,7 +219,13 @@ function editMatchRequest(
   firstLineRef: string,
   secondLineRef: string,
   date: Date,
+  validateInputs: () => boolean
 ) {
+
+  let valid = validateInputs()
+  console.log(valid);
+  if(!valid) return;
+
   let t1 = Number.parseInt(team1.replace('Team ', ''));
   let t2 = Number.parseInt(team2.replace('Team ', ''));
   let stadium_id = stadium.id;

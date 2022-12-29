@@ -4,19 +4,22 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { authHeader } from "../../auth";
 import axios from 'axios'
-import { dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from "../../Common";
+import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, mockRole, Stadium, validate } from "../../Common";
+import { useHistory } from "react-router-dom";
 
 export default function CreateMatch() {
-  const defaultStadium: Stadium = {
-    id: 0,
-    name: ''
-  };
-
   const [isLoading, setIsLoading] = useState(true);
+
+  const history = useHistory();
+  if(mockRole >= 2) {
+    history.push('/NotFound');
+  }
+
+
 
   const [team1, setTeam1] = useState('');
   const [team2, setTeam2] = useState('');
-  const [stadium, setStadium] = useState(defaultStadium);
+  const [stadium, setStadium] = useState(Stadium.default());
   const [mainRef, setMainRef] = useState('');
   const [firstLineRef, setFirstLineRef] = useState('');
   const [secondLineRef, setSecondLineRef] = useState('');
@@ -31,15 +34,21 @@ export default function CreateMatch() {
   const [teams, setTeams] = useState(new Array<string>());
   const [refs, setRefs] = useState(new Array<string>());
 
+  const [errors, setErrors] = useState({
+    team1: '',
+    team2: '',
+    stadium: '',
+    mainRef: '',
+    firstLineRef: '',
+    secondLineRef: '',
+  });
+
+  const [validInputs, setValidInputs] = useState(true);
+
   useEffect(() => {
-    setTimeout(
-      () => {
-        fetchTeams(setTeams);
-        fetchRefs(setRefs);
-        fetchStadiums(setStadiums);
-      },
-      2000
-    )
+    fetchTeams(setTeams);
+    fetchRefs(setRefs);
+    fetchStadiums(setStadiums);
   }, []);
 
   useEffect(
@@ -52,21 +61,16 @@ export default function CreateMatch() {
     [teams, stadiums, refs]
   )
 
-  const enableCreateMatchButton: () => boolean = () => {
-    let enable = team1.length > 0
-      && team2.length > 0
-      && stadium.id >= 0
-      && mainRef.length > 0
-      && firstLineRef.length > 0
-      && secondLineRef.length > 0
-      && team1 !== team2
-      && mainRef !== firstLineRef 
-      && mainRef !== secondLineRef
-      && firstLineRef !== secondLineRef
-      && date.getTime() > Date.now();
+  // Only validate inpenuts (and thus show errors)
+  // When validInputs is false. 
+  // It starts as true and is set to false for the first time when we press `create match`
+  // with invalid inputs.
+  useEffect(() => { !validInputs && validateInputs() }, [team1, team2, stadium, mainRef, firstLineRef, secondLineRef]);
 
-      return enable;
-  };
+  const validateInputs = () => {
+    return areInputsValid(errors, team1, team2, firstLineRef, secondLineRef, mainRef, stadium, setErrors, date, setValidInputs);
+  }
+
 
   return (
     <div style={{
@@ -81,17 +85,27 @@ export default function CreateMatch() {
 
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ display: 'flex', flexDirection: 'column', paddingRight: 20 }}>
-            {dropDown(team1, teams, 'Choose Team 1', '200px', setTeam1)}
+            {dropDown(team1, teams, 'Choose Team 1', '200px', setTeam1, errors.team1)}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {dropDown(team2, teams, 'Choose Team 2', '200px', setTeam2)}
+            {dropDown(team2, teams, 'Choose Team 2', '200px', setTeam2, errors.team2)}
           </div>
         </div>
 
 
         <div style={{ paddingTop: '20px', }}>
-          {dropDown(stadium.name, stadiums.map((s) => s.name), 'Choose a stadium!', '420px', (sName) => setStadium(stadiums.find((s) => s.name === sName)!!))}
+          {
+            dropDown(
+              stadium.name,
+              stadiums.map((s) => s.name),
+              'Choose a stadium!',
+              '420px',
+              (sName) => setStadium(stadiums.find((s) => s.name === sName)!!),
+              errors.stadium
+            )
+          }
+
         </div>
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -119,25 +133,25 @@ export default function CreateMatch() {
         </LocalizationProvider>
 
         <div style={{ paddingTop: '20px' }}>
-          {dropDown(mainRef, refs, 'Main referee!', '420px', setMainRef)}
+          {dropDown(mainRef, refs, 'Main referee!', '420px', setMainRef, errors.mainRef)}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', paddingTop: 20, paddingBottom: 20 }}>
           <div style={{ display: 'flex', flexDirection: 'column', paddingRight: 20 }}>
-            {dropDown(firstLineRef, refs, 'First line referee', '200px', setFirstLineRef)}
+            {dropDown(firstLineRef, refs, 'First line referee', '200px', setFirstLineRef, errors.firstLineRef)}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {dropDown(secondLineRef, refs, 'Second line referee', '200px', setSecondLineRef)}
+            {dropDown(secondLineRef, refs, 'Second line referee', '200px', setSecondLineRef, errors.secondLineRef)}
           </div>
         </div>
 
         <Button
-          onClick={() => createMatchRequest(team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date)}
+          onClick={() => createMatchRequest(team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, validateInputs)}
           style={{ width: '420px', borderRadius: 2 }}
           variant="outlined"
           fullWidth
-          disabled = { !enableCreateMatchButton() }
+          disabled = {!validInputs}
         >
           Create Match
         </Button>
@@ -156,7 +170,13 @@ function createMatchRequest(
   firstLineRef: string,
   secondLineRef: string,
   date: Date,
+  validateInputs: () => boolean
 ) {
+
+  let valid = validateInputs()
+  console.log(valid);
+  if(!valid) return;
+
   let t1 = Number.parseInt(team1.replace('Team ', ''));
   let t2 = Number.parseInt(team2.replace('Team ', ''));
   let stadium_id = stadium.id;
