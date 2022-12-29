@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MatchTableController;
 use App\Http\Controllers\StadiumController;
-
+use App\Http\Controllers\TicketController;
 
 #note: still didn't apply the verification and authorization rules
 
@@ -28,3 +28,8 @@ Route::post('/match/create', [MatchTableController::class,'create'])->middleware
 Route::put('/match/update/{id}', [MatchTableController::class,'update'])->middleware('auth:api', 'verified');
 Route::post('/stadium/create', [StadiumController::class,'create'])->middleware('auth:api', 'verified');
 Route::get('/stadiums', [StadiumController::class,'index'])->middleware('auth:api', 'verified');
+
+# fan
+Route::post('/ticket/create', [TicketController::class,'create'])->middleware('auth:api');
+Route::get('/tickets', [TicketController::class,'index'])->middleware('auth:api');
+Route::delete('/ticket/delete', [TicketController::class,'delete'])->middleware('auth:api');

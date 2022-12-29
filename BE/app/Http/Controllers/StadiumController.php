@@ -7,13 +7,13 @@ use App\Models\Stadium;
 use App\Http\Resources\StadiumCollection;
 use App\Http\Resources\StadiumResource;
 use App\Http\Misc\Traits\WebServiceResponse;
-use App\Http\Requests\IndexRequest;
+use App\Http\Requests\ManagerIndexRequest;
 use App\Http\Requests\StadiumCreateRequest;
 class StadiumController extends Controller
 {
     use WebServiceResponse;
     /*--------------------------------------------------------------------------------------------------------------------------------------- */
-    public function index(IndexRequest $request)
+    public function index(ManagerIndexRequest $request)
     {
         $request_validated = $request->validated();
 
@@ -28,7 +28,11 @@ class StadiumController extends Controller
     public function create(StadiumCreateRequest $request)
     {
         $request_validated = $request->validated();
-
+        $norm_seats = $request_validated['total_number_of_seats'] - ($request_validated['number_of_rows_in_vip'] * $request_validated['number_seats_per_row']);
+        if($norm_seats < 0)
+        {
+            return $this->messageResponse('the number of vip seats is greater than the total number of seats', '422'); 
+        }
         $stadium = Stadium::create([
             'name' => $request_validated['name'],
             'shape' => $request_validated['shape'],

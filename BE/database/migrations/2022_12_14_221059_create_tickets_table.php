@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedInteger('seat_row')->nullable();
             $table->unsignedInteger('seat_number')->nullable();
             $table->uuid('ticket_number');
-            $table->primary(['user_id', 'match_id']);
+            $table->primary('ticket_number');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('match_id')->references('id')->on('match_tables')->onDelete('cascade');
             $table->timestamps();
