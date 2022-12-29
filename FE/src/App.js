@@ -13,9 +13,14 @@ import ViewAllMatches from './Components/ViewAllMatches/ViewAllMatches'
 import AddStadium from './Components/AddStadium/AddStadium'
 
 import axios from 'axios';
+import { loadInitialState } from './States/UserState/UserSlice'
+import { useDispatch } from 'react-redux'
+
 axios.defaults.baseURL = 'http://localhost:8000';
 
 const App = () => {                           
+  const dispatch = useDispatch();
+  dispatch(loadInitialState());
   return (
     <Router>
       <div className="App">
@@ -41,7 +46,7 @@ const App = () => {
                 <CreateMatch></CreateMatch>
             </Route>
             <Route path="/EditMatch/:matchId">
-                <EditMatch></EditMatch>
+                <EditMatch>EditMatch</EditMatch>
             </Route>
             <Route exact path="/ViewAllMatches">
                 <ViewAllMatches></ViewAllMatches>

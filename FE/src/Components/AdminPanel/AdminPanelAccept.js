@@ -10,61 +10,70 @@ import {
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import SportsSoccerIcon from '@material-ui/icons/SportsSoccer';
 import PersonIcon from '@material-ui/icons/Person';
-function AdminPanelAccept() {
-   const items = [
-      {
-        id: 1,
-        icon: <SupervisorAccountIcon />,
-        title: 'John Legend',
-        subtitle: 'john_leg@gmail.com',
-        buttonText1: 'Accept as Manager',
-        buttonText2: 'Deny',
-      },
-      {
-        id: 2,
-        icon: <SportsSoccerIcon />,
-        title: 'Gordon Ramsey',
-        subtitle: 'Gordon@Ramsey.com',
-        buttonText1: 'Accept as Manager',
-        buttonText2: 'Deny',
-      },
-      {
-        id: 3,
-        icon: <PersonIcon />,
-        title: 'Taric Boi',
-        subtitle: 'Taric@Boi.com',
-        buttonText1: 'Accept as Manager',
-        buttonText2: 'Deny',
+import { api } from '../../States/api';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import ReactLoading from 'react-loading';
 
-      },
-    ];
+function AdminPanelAccept() {
+  const accessToken = useSelector((state) => state.user.userInfo.accessToken);
+
+    const icons = [<SupervisorAccountIcon />, <SportsSoccerIcon />, <PersonIcon />]
+
+    const [users, setUsers] = React.useState([])
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    const body = {page_size: 10, current_page: 1}
+    // useEffect to fetch data from ${api}/user/index using axios
+    React.useEffect(() => {
+      axios.post(`${api}/api/user/index/unverified`, body, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((response) => {
+        setIsLoading(false);
+        setUsers(response.data.users)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    }, [])
+
+
+
   return (
-    <List style={{
+    !isLoading?(<List style={{
       marginLeft: '10px',
       marginRight: '10px',
     }}>
-      {items.map((item) => (
-        <ListItem key={item.id}>
+      {users.map((user) => (
+        <ListItem key={user.id}>
           <ListItemIcon>
-            {item.icon}
+            {icons[user.role]}
           </ListItemIcon>
           <ListItemText
-            primary={item.title}
-            secondary={item.subtitle}
+            primary={user.username}
+            secondary={user.email}
           />
           <ListItemSecondaryAction>
             <Button variant="contained" color="primary" 
             style={{marginRight: '20px'}}
             >
-              {item.buttonText1}
+              Accept as Coach
             </Button>
-            <Button variant="contained" color="primary">
-              {item.buttonText2}
-            </Button>
+
           </ListItemSecondaryAction>
         </ListItem>
-      ))}
-    </List>
+      ))}</List>):(<ReactLoading style={{
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      marginTop: '3rem',
+      width: '3rem',
+      height: '10%',
+      color: '#23359d',
+
+    }} type="balls" color='#23359d' height={10} width={10} />)
   );
 }
 

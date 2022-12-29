@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   TextField,
@@ -9,6 +9,11 @@ import {
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import Alert from '@material-ui/lab/Alert';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { loginAPI } from '../../States/UserState/UserSlice';
+import { useHistory } from 'react-router-dom';
+
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -37,6 +42,12 @@ const useStyles = makeStyles((theme) => ({
 
 function SignIn() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const isLoading = useSelector((state) => state.user.isLoading);
+  const loginError = useSelector((state) => state.user.error);
+
   const [values, setValues] = useState({
     username: '',
     password: '',
@@ -92,18 +103,22 @@ function SignIn() {
     event.preventDefault();
 
     if (validateForm()) {
-      console.log('Login successful');
+      console.log('Validation Successful');
       setSubmitted(true);
-
     }
   };
+
+  //whenevr isLoggedIn is changed, it will redirect to home page
+  useEffect(() => {
+    if(isLoggedIn){
+      history.push('/');
+    }
+  }, [isLoggedIn]);
 
   return (
     <form className={classes.form} onSubmit={handleSubmit}>
       {submitted && (
-        <Alert severity="success">
-          Login successful!
-        </Alert>
+        (isLoading)?(<Alert style={{marginTop: '1rem',}} severity="info">Loading</Alert>):(loginError)?(<Alert style={{marginTop: '1rem',}} severity="error">{loginError}</Alert>):(<Alert style={{marginTop: '1rem',}} severity="success">Login Successful</Alert>)
       )}
       <TextField
         className={classes.textField}
@@ -144,7 +159,8 @@ function SignIn() {
           color="primary"
           className={classes.button}
           type="submit"
-          disabled={submitted}
+          disabled={submitted&&isLoading}
+          onClick={() => dispatch(loginAPI({ username: values.username, password: values.password}))}
         >
           Login
         </Button>

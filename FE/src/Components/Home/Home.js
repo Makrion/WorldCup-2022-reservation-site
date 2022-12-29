@@ -2,6 +2,7 @@ import './style/main/index.css';
 import { Link } from 'react-router-dom'
 import {  useDispatch } from 'react-redux';
 import { SetInferredRole } from '../../States/HomeState/HomeSlice';
+import { useSelector } from 'react-redux';
 //import audio from './style/Fifa.mp3'
 
 const Home  = () => {
@@ -15,6 +16,8 @@ const Home  = () => {
       //let Fifa = new Audio(audio)
       //Fifa.play()
     }
+    const userInfo = useSelector((state) => state.user.userInfo);
+    const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
    return ( 
       <div>
@@ -27,10 +30,11 @@ const Home  = () => {
             </p>
           </div>
           <div className="cards">
-          <Link to="/SignUp" style={{
+
+          {(userInfo.role===1||userInfo.role==='')?<Link to={(!isLoggedIn)?"/SignUp":"/profile"} style={{
             textDecoration: 'none',
           }}>
-            <div className="card" onClick={()=>{setInferredRole('Coach')}}>
+           <div className="card" onClick={()=>{setInferredRole('Coach')}}>
               <img className="img-card" src="./coach.jpeg" alt="" />
               <div className="card-body">
               <h3 className="card-title">I'm a Coach</h3>
@@ -39,15 +43,15 @@ const Home  = () => {
               </p>
               </div>
               <div className="card-button-container">
-              <button className="card-button"> Sign Up as a Coach</button>
+              <button className="card-button"> {(!isLoggedIn)?"Sign Up as a Coach": "Take me to Profile"}</button>
               </div>
             </div>
-            </Link>
-
-            <Link to="/SignUp" style={{
+            </Link>:null}
+            
+            {(userInfo.role===2||userInfo.role==='')?<Link to={(!isLoggedIn)?"/SignUp":"/profile"} style={{
             textDecoration: 'none',
           }}>
-            <div className="card" onClick={()=>{setInferredRole('Fan')}}>
+           <div className="card" onClick={()=>{setInferredRole('Fan')}}>
               <img className="img-card" src="./fan.jpeg" alt="" />
               <div className="card-body">
               <h3 className="card-title">I'm a Fan</h3>
@@ -56,14 +60,16 @@ const Home  = () => {
               </p>
               </div>
               <div className="card-button-container">
-              <button className="card-button"> Sign Up as a Fan</button>
+              <button className="card-button"> {(!isLoggedIn)?"Sign Up as a Fan": "Take me to Profile"}</button>
               </div>
             </div>
             </Link>
+            :null}
 
-            <Link to="/View" style={{
+            {!isLoggedIn && <Link to="/View" style={{
             textDecoration: 'none',
           }}>
+            
             <div className="card" onClick={()=>handleClick()}>
               <img className="img-card" src="./guest.jpeg" alt="" />
               <div className="card-body">
@@ -76,15 +82,15 @@ const Home  = () => {
               <button className="card-button"> View Matches</button>
               </div>
             </div>
-            </Link>
+            </Link>}
           </div>
-          <Link to="/SignIn" style={{
+          {!isLoggedIn && <Link to="/SignIn" style={{
             textDecoration: 'none',
           }}>
           <div className="button-container">
               <button className="normal-button"> I'm already Registered </button>
           </div>
-          </Link>
+          </Link>}
 
         </div>
       </section>
