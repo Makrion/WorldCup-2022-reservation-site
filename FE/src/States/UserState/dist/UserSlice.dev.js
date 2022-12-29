@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = exports.loadInitialState = exports.SetIsLoggedIn = exports.SetUserInfo = exports.updateAPI = exports.logoutAPI = exports.signUpAPI = exports.loginAPI = void 0;
+exports["default"] = exports.ResetCard = exports.loadInitialState = exports.SetIsLoggedIn = exports.SetUserInfo = exports.updateAPI = exports.logoutAPI = exports.signUpAPI = exports.loginAPI = void 0;
 
 var _toolkit = require("@reduxjs/toolkit");
 
@@ -56,6 +56,10 @@ var reducers = {
       state.userInfo = initialState.userInfo;
       state.isLoggedIn = false;
     }
+  },
+  ResetCard: function ResetCard(state) {
+    state.updateError = null;
+    state.updateSuccess = false;
   }
 };
 var loginAPI = (0, _toolkit.createAsyncThunk)('user/login', function _callee(credentials) {
@@ -69,9 +73,10 @@ var loginAPI = (0, _toolkit.createAsyncThunk)('user/login', function _callee(cre
 
         case 2:
           response = _context.sent;
+          console.log(response);
           return _context.abrupt("return", response.data);
 
-        case 4:
+        case 5:
         case "end":
           return _context.stop();
       }
@@ -147,9 +152,10 @@ var updateAPI = (0, _toolkit.createAsyncThunk)('user/update', function _callee4(
 
         case 9:
           response = _context4.sent;
+          console.log(response);
           return _context4.abrupt("return", response.data);
 
-        case 11:
+        case 12:
         case "end":
           return _context4.stop();
       }
@@ -223,6 +229,21 @@ var extraReducers = (_extraReducers = {}, _defineProperty(_extraReducers, loginA
   state.error = action.error.message;
   state.isLoading = false;
 }), _defineProperty(_extraReducers, updateAPI.fulfilled, function (state, action) {
+  state.userInfo.firstName = action.payload.first_name;
+  state.userInfo.lastName = action.payload.last_name;
+  state.userInfo.username = action.payload.username;
+  state.userInfo.accessToken = action.payload.access_token;
+  state.userInfo.email = action.payload.email;
+  state.userInfo.birthDate = action.payload.birth_date;
+  console.log(action.payload.birth_date);
+  state.userInfo.gender = action.payload.gender === "m" ? "Male" : "Female";
+  state.userInfo.country = action.payload.nationality;
+  state.userInfo.id = action.payload.id;
+  state.userInfo.role = action.payload.role;
+  state.userInfo.isVerified = action.payload.is_verified;
+  console.log(action.payload);
+  console.log(state.userInfo.gender);
+  localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
   state.updateSuccess = true;
   state.updateIsLoading = false;
 }), _defineProperty(_extraReducers, updateAPI.pending, function (state, action) {
@@ -240,7 +261,9 @@ var userSlice = (0, _toolkit.createSlice)({
 var _userSlice$actions = userSlice.actions,
     SetUserInfo = _userSlice$actions.SetUserInfo,
     SetIsLoggedIn = _userSlice$actions.SetIsLoggedIn,
-    loadInitialState = _userSlice$actions.loadInitialState;
+    loadInitialState = _userSlice$actions.loadInitialState,
+    ResetCard = _userSlice$actions.ResetCard;
+exports.ResetCard = ResetCard;
 exports.loadInitialState = loadInitialState;
 exports.SetIsLoggedIn = SetIsLoggedIn;
 exports.SetUserInfo = SetUserInfo;

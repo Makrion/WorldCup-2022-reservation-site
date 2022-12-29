@@ -49,6 +49,12 @@ const initialState = {
         state.isLoggedIn = false
       }
     },
+    ResetCard(state){
+      state.updateError = null
+      state.updateSuccess = false
+    }
+
+
 
 
  }
@@ -57,6 +63,7 @@ const initialState = {
   'user/login',
   async (credentials) => {
     const response = await axios.post(`${api}/api/user/login`, credentials);
+    console.log(response)
     return response.data;
   }
 );
@@ -93,11 +100,14 @@ export const updateAPI = createAsyncThunk(
     if (credentials.birthDate) updatedCredentials.birth_date = (new Date(credentials.birthDate)).getTime()/1000 
     if (credentials.newPassword) updatedCredentials.password = credentials.newPassword
 
+  
     const response = await axios.put(`${api}/api/user/update`, updatedCredentials, {
       headers: {
         Authorization: `Bearer ${credentials.accessToken}`
         }
         });
+
+        console.log(response)
     return response.data;
   }
 );
@@ -185,6 +195,21 @@ const extraReducers = {
    
   },
   [updateAPI.fulfilled]: (state, action) => {
+    state.userInfo.firstName = action.payload.first_name;
+    state.userInfo.lastName = action.payload.last_name;
+    state.userInfo.username = action.payload.username;
+    state.userInfo.accessToken = action.payload.access_token;
+    state.userInfo.email = action.payload.email;
+    state.userInfo.birthDate = action.payload.birth_date
+    console.log(action.payload.birth_date)
+    state.userInfo.gender = (action.payload.gender==="m")? "Male" : "Female"
+    state.userInfo.country = action.payload.nationality
+    state.userInfo.id = action.payload.id
+    state.userInfo.role = action.payload.role
+    state.userInfo.isVerified = action.payload.is_verified   
+    console.log(action.payload)
+    console.log(state.userInfo.gender)
+    localStorage.setItem('userInfo', JSON.stringify(state.userInfo))
     state.updateSuccess = true
     state.updateIsLoading = false;
   },
@@ -194,6 +219,7 @@ const extraReducers = {
   [updateAPI.rejected]: (state, action) => {
     state.updateError = action.error.message
     state.updateIsLoading = false;
+
     }
 }
 
@@ -202,5 +228,5 @@ const extraReducers = {
 
 const userSlice = createSlice({name: "user", initialState, reducers, extraReducers})
 
-export const { SetUserInfo, SetIsLoggedIn, loadInitialState } = userSlice.actions
+export const { SetUserInfo, SetIsLoggedIn, loadInitialState, ResetCard } = userSlice.actions
 export default userSlice.reducer

@@ -21,7 +21,6 @@ import { signUpAPI } from '../../States/UserState/UserSlice';
 import { useHistory } from 'react-router-dom';
 
 
-
 function SignUp() {
   const inferredRole = useSelector(state => state.home.inferredRole);
   const classes = useStyles();
@@ -288,6 +287,7 @@ function SignUp() {
           label="birthdate"
           type="date"
           name="birthDate"
+          InputProps={{inputProps: { min: "1970-01-01", max: "2017-01-01"} }}
           value={values.birthDate}
           onChange={handleChange}
           error={Boolean(errors.birthDate)}

@@ -12,6 +12,7 @@ import SportsSoccerIcon from '@material-ui/icons/SportsSoccer';
 import PersonIcon from '@material-ui/icons/Person';
 import { api } from '../../States/api';
 import axios from 'axios';
+import Axios from 'axios';
 import { useSelector } from 'react-redux';
 import ReactLoading from 'react-loading';
 
@@ -20,19 +21,21 @@ import ReactLoading from 'react-loading';
 function AdminPanel() {
   const accessToken = useSelector((state) => state.user.userInfo.accessToken);
 
-    const icons = [<SupervisorAccountIcon />, <SportsSoccerIcon />, <PersonIcon />]
-    const [isLoading, setIsLoading] = React.useState(true);
+  const icons = [<SupervisorAccountIcon />, <SportsSoccerIcon />, <PersonIcon />]
+  const [isLoading, setIsLoading] = React.useState(true);
 
-    const [users, setUsers] = React.useState([])
+  const [users, setUsers] = React.useState([])
 
-    const body = {page_size: 10, current_page: 1}
-    // useEffect to fetch data from ${api}/user/index using axios
-    React.useEffect(() => {
-      axios.post(`${api}/api/user/index/`, body, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+
+
+  const body = { page_size: 20, current_page: 1 }
+  // useEffect to fetch data from ${api}/user/index using axios
+  React.useEffect(() => {
+    axios.post(`${api}/api/user/index/`, body, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
       .then((response) => {
         setIsLoading(false);
         setUsers(response.data.users)
@@ -40,26 +43,37 @@ function AdminPanel() {
       .catch((error) => {
         console.log(error);
       })
-    }, [])
+  }, [])
 
-    const deleteUser = (id) => {
-      axios.delete(`${api}/api/user/delete/`,id, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then((response) => {
-        alert(response);
-      })
-      .catch((error) => {
-        alert(error);
-      })
-    }
+  const deleteUser = (id) => {
+    Axios({
+      method: "DELETE",
+      url: `${api}/api/user/delete/`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        user_id: id
+      },
+    })
+    .then((response) => {
+      setUsers(users.filter((user) => user.id !== id))
+    })
+    .catch((error) => {
+      alert(error);
+      console.log(accessToken)
+    })
+  }
+
+    
+
+
 
 
   return (
-    
-    !isLoading?(<List>
+
+    !isLoading ? (<List>
       {users.map((user) => (
         <ListItem key={user.id}>
           <ListItemIcon>
@@ -70,19 +84,19 @@ function AdminPanel() {
             secondary={user.email}
           />
           <ListItemSecondaryAction>
-            <Button variant="contained" 
-            style={{
-              color: 'white',
-              backgroundColor: '#23359d',
-            }}
-            onClick={() => deleteUser(user.id)}
+            <Button variant="contained"
+              style={{
+                color: 'white',
+                backgroundColor: '#23359d',
+              }}
+              onClick={() => deleteUser(user.id)}
             >
               Delete
             </Button>
           </ListItemSecondaryAction>
         </ListItem>
       ))}
-    </List>):(<ReactLoading style={{
+    </List>) : (<ReactLoading style={{
       marginLeft: 'auto',
       marginRight: 'auto',
       marginTop: '3rem',

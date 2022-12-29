@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Card,
@@ -16,7 +16,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Alert } from '@material-ui/lab';
 import { updateAPI } from '../../States/UserState/UserSlice';
-import { SetUserInfo } from '../../States/UserState/UserSlice';
+import { ResetCard } from '../../States/UserState/UserSlice';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -56,11 +56,23 @@ function ProfileCard() {
   useEffect(() => {
     if (updateSuccess) {
       handleCloseModal();
+      setSubmitValues({
+        firstName: '',
+        lastName: '',
+        country: userInfo.country,
+        oldPassword: '',
+        newPassword: '',
+        gender: userInfo.gender,
+        birthDate: '',
+        accessToken: userInfo.accessToken,
+      })
+      dispatch(ResetCard());
+      setSubmitted(false);
+
     }
   }, [updateSuccess]);
 
   const [submitted, setSubmitted] = useState(false);
-
 
 
   // maybe fix gender and birthDate initial values
@@ -113,7 +125,8 @@ function ProfileCard() {
       setSubmitValues({ ...submitValues, newPassword: event.target.value });
     };
 
-    const name = userInfo.firstName + " " + userInfo.lastName
+    // rewrite the line above to use useMemo
+    const name = useMemo(() => userInfo.firstName + " " + userInfo.lastName, [userInfo.firstName, userInfo.lastName])
     const roles = ['Admin', 'Coach', 'Fan']
 
   if (isLoggedIn){
@@ -132,7 +145,7 @@ function ProfileCard() {
           <Typography variant="h6"><span style={{color:'#23359d'}}>Role:</span> {roles[userInfo.role]}</Typography>
           </Grid>
           <Grid item xs={6}>
-          <Typography variant="h6"><span style={{color:'#23359d'}}>birthDate:</span> {(new Date(userInfo.birthDate)).toISOString().split('T')[0]}</Typography>
+          <Typography variant="h6"><span style={{color:'#23359d'}}>birthDate:</span> {(new Date(userInfo.birthDate*1000)).toISOString().split('T')[0]}</Typography>
           <Typography variant="h6"><span style={{color:'#23359d'}}>Gender:</span> {userInfo.gender}</Typography>
           <Typography variant="h6"><span style={{color:'#23359d'}}>Country:</span> {(userInfo.country)?(userInfo.country):"Unspecified"}</Typography>
           </Grid>
@@ -183,6 +196,7 @@ function ProfileCard() {
                 value={submitValues.birthDate}
                 onChange={handleChangebirthDate}
                 className={classes.modalTextField}
+                InputProps={{inputProps: { min: "1970-01-01", max: "2017-01-01"} }}
               />
               </Grid>
               <Grid item xs={12}>
@@ -246,7 +260,10 @@ function ProfileCard() {
               >
               Update
             </Button>
-              <Button onClick={handleCloseModal}
+              <Button onClick={()=>{
+                handleCloseModal()
+                setSubmitted(false)
+              }}
               style={{
                 // push button to the right
                 float: 'right',

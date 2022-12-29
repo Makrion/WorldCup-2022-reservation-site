@@ -14,6 +14,7 @@ import { api } from '../../States/api';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import ReactLoading from 'react-loading';
+import Axios from 'axios';
 
 function AdminPanelAccept() {
   const accessToken = useSelector((state) => state.user.userInfo.accessToken);
@@ -23,7 +24,7 @@ function AdminPanelAccept() {
     const [users, setUsers] = React.useState([])
     const [isLoading, setIsLoading] = React.useState(true);
 
-    const body = {page_size: 10, current_page: 1}
+    const body = {page_size: 20, current_page: 1}
     // useEffect to fetch data from ${api}/user/index using axios
     React.useEffect(() => {
       axios.post(`${api}/api/user/index/unverified`, body, {
@@ -39,6 +40,27 @@ function AdminPanelAccept() {
         console.log(error);
       })
     }, [])
+
+    const verifyUser = (id) => {
+      Axios({
+        method: "POST",
+        url: `${api}/api/user/verify/`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data: {
+          user_id: id
+        },
+      })
+      .then((response) => {
+        setUsers(users.filter((user) => user.id !== id))
+      })
+      .catch((error) => {
+        alert(error);
+        console.log(accessToken)
+      })
+    }
 
 
 
@@ -58,6 +80,8 @@ function AdminPanelAccept() {
           />
           <ListItemSecondaryAction>
             <Button variant="contained" color="primary" 
+            onClick={() => verifyUser(user.id)}
+
             style={{marginRight: '20px'}}
             >
               Accept as Coach
