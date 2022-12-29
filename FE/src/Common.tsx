@@ -10,9 +10,6 @@ import { authHeader } from "./auth";
 export type ReactCallback<T> = React.Dispatch<React.SetStateAction<T>>;
 export type CreateMatchErrors = { team1: string; team2: string; stadium: string; mainRef: string; firstLineRef: string; secondLineRef: string; }
 
-// 0 => admin, 1 => manager, 2 => fan.
-export const mockRole: number = 1;
-
 export class Stadium {
   id: number;
   name: string;

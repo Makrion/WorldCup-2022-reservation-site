@@ -4,7 +4,6 @@ import { useLocation, useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { logoutAPI } from '../../States/UserState/UserSlice';
-import { useHistory } from 'react-router-dom';
 import { useEffect } from 'react';
 
 //stateless functional component (write sfc)

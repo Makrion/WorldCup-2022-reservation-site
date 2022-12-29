@@ -4,14 +4,17 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { authHeader } from "../../auth";
 import axios from 'axios'
-import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, mockRole, Stadium, validate } from "../../Common";
+import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from "../../Common";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function CreateMatch() {
   const [isLoading, setIsLoading] = useState(true);
 
   const history = useHistory();
-  if(mockRole >= 2) {
+
+  const role = useSelector((state: any) => state.user.userInfo.role);
+  if(role >= 2) {
     history.push('/NotFound');
   }
 

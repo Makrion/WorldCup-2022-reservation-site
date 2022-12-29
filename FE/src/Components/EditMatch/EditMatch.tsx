@@ -7,15 +7,17 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useParams, useHistory } from 'react-router-dom';
 
 import { authHeader } from "../../auth";
-import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, mockRole, Stadium } from '../../Common';
+import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from '../../Common';
+import { useSelector } from 'react-redux';
 
 export default function EditMatch() {
 
   let { matchId } = useParams<{ matchId?: string }>();
+  const role = useSelector((state: any) => state.user.userInfo.role);
 
   const history = useHistory();
 
-  if (!Number.parseInt(matchId!!) || mockRole >= 2) {
+  if (!Number.parseInt(matchId!!) || role >= 2) {
     history.push('/NotFound');
   }
 

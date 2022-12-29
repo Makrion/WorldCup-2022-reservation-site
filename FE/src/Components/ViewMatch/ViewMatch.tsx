@@ -3,12 +3,14 @@ import axios from 'axios'
 
 import { useParams, useHistory } from 'react-router-dom';
 import { Button } from "@mui/material";
-import { fetchStadiums, loading, mockRole, Stadium } from "../../Common";
+import { fetchStadiums, loading, Stadium } from "../../Common";
+import { useSelector } from "react-redux";
 
 export default function ViewMatch() {
 
   let { matchId } = useParams<{matchId?: string}>();
   const history = useHistory();
+  const role = useSelector((state: any) => state.user.userInfo.role);
 
   if(!Number.parseInt(matchId!!)) {
     history.push('/NotFound');
@@ -162,7 +164,7 @@ export default function ViewMatch() {
           </Button>
 
           {
-            (mockRole < 2)
+            (role < 2)
             &&
             <Button
               onClick={() => { history.push(`/EditMatch/${matchId}`) }}
