@@ -31,7 +31,7 @@ export default function CreateMatch() {
 
 
   const defaultDate = new Date();
-  defaultDate.setDate(defaultDate.getDate() + 1);
+  defaultDate.setDate(defaultDate.getDate() + 2);
   defaultDate.setHours(defaultDate.getHours() + 1);
   const [date, setDate] = useState(defaultDate);
 
@@ -60,8 +60,7 @@ export default function CreateMatch() {
 
   useEffect(
     () => {
-      let allLoaded = (teams !== null && stadiums !== null && refs !== null)
-        && (teams.length > 0 && stadiums.length > 0 && refs.length > 0);
+      let allLoaded = (teams !== null && stadiums !== null && refs !== null);
 
       setIsLoading(!allLoaded);
     },

@@ -57,8 +57,14 @@ export function fetchStadiums(setData: ReactCallback<Array<Stadium>>, authToken:
   ).then((response) => {
     if (response.status === 200) {
       let data = response.data;
-      let stadiums = data['stadiums'].map((stadium: any) => { return { id: stadium.id, name: stadium.name } });
-      setData(stadiums);
+      let stadiumData =  new Array<Stadium>(data['stadiums']);
+      console.log(stadiumData);
+      if(stadiumData.length > 0) {
+        let stadiums = data['stadiums'].map((stadium: any) => { return { id: stadium.id, name: stadium.name } });
+        setData(stadiums);
+      } else {
+        setData([]);
+      }
     }
   }).catch((erroro) => {
     alert("Error connecting to the server :(")
@@ -109,6 +115,9 @@ export function dropDown(
 }
 
 export function matchDate(date: Date, setDate: ReactCallback<Date>) {
+  let minDate = new Date(Date.now());
+  minDate.setDate(minDate.getDate() + 2);
+
   return (
     <Box width='200px' >
       <DatePicker
@@ -118,6 +127,7 @@ export function matchDate(date: Date, setDate: ReactCallback<Date>) {
         onChange={(newValue) => {
           setDate(new Date(newValue!!.toString()));
         }}
+        minDate={minDate}
       />
     </Box>
   );
