@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios'
-
 import { useParams, useHistory } from 'react-router-dom';
 import { Button } from "@mui/material";
 import { fetchStadiums, loading, Stadium } from "../../Common";
 import { useSelector } from "react-redux";
+import { api } from '../../States/api';
+import Axios from "axios";
 
 export default function ViewMatch() {
 
@@ -13,6 +14,7 @@ export default function ViewMatch() {
   const role = useSelector((state: any) => state.user.userInfo.role);
   const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn);
   const isVerified = useSelector((state: any) => state.user.userInfo.isVerified);
+  const accessToken = useSelector((state: any) => state.user.userInfo.accessToken);
 
   if(!Number.parseInt(matchId!!)) {
     history.push('/NotFound');
@@ -28,13 +30,45 @@ export default function ViewMatch() {
   const [secondLineRef, setSecondLineRef] = useState('');
   const [date, setDate] = useState(new Date());
 
+  const reserveMatch = (id: any, row: any, column: any, type: any) => {
+    let body;
+    if(type===1){
+     body = {
+      match_id: id,
+      seat: "vip",
+      seat_row: row,
+      seat_number: column
+    }
+  }
+  else {
+     body = {
+      match_id: id,
+      seat: "norm",
+    }
+  }
+    Axios({
+      method: "POST",
+      url: `${api}/api/ticket/create`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: body,
+    })
+    .then((response) => {
+      alert("Reservation was Successful")
+    })
+    .catch((error) => {
+      alert(error.response.data.message);
+    })
+  }
+
   useEffect(() => {
     axios
       .get(`api/match/${matchId}`, {})
       .then((response) => {
         if (response.status === 200) {
           let data = response.data;
-
           console.log(data)
 
           let t1Id = data['team_1'];
@@ -48,6 +82,28 @@ export default function ViewMatch() {
 
           let matchDate: Date = new Date(0);
           matchDate.setUTCSeconds(data['match_date']);
+
+
+         // for each set in data.reserved_vip_seats
+          //add to the array of special cells
+          const specialCells = [];
+          for (let i = 0; i < data.reserved_vip_seats.length; i++) {
+            let seat = data.reserved_vip_seats[i];
+            let seat_row = seat.seat_row - 1;
+            for (let j = 0; j < seat.seat_number.length; j++) {
+            let seat_col = seat.seat_number[j] - 1 ;
+
+            specialCells.push(seat_row * data.no_seats_per_row + seat_col + 1);
+            }
+          }
+          console.log(data.reserved_vip_seats);
+          console.log(specialCells);
+
+          setStadiumInfo({
+            rows: data.no_rows_in_vip,
+            columns: data.no_seats_per_row,
+            special: specialCells
+          })
 
           setTeam1(`Team ${t1Id}`);
           setTeam2(`Team ${t2Id}`);
@@ -68,7 +124,11 @@ export default function ViewMatch() {
   }, [matchId]);
 
 
-  const [stadiumInfo, setStadiumInfo] = useState({})
+  const [stadiumInfo, setStadiumInfo] = useState({
+    rows: 1,
+    columns: 1,
+    special: [1, 2, 3]
+  })
 
     // rewrite the line above for typescript
   const ButtonGrid = ({ rows, columns, specialCellNumbers }: { rows: number, columns: number, specialCellNumbers: number[] }) => {
@@ -88,10 +148,14 @@ export default function ViewMatch() {
               borderRadius: '50%',
               width: '3rem',
               height: '3rem',
-              cursor: 'pointer',
+              cursor: isSpecial? '':'pointer',
               border: '3px solid #3f51b5',
-
             }}
+            onClick={() => {
+              if(isSpecial) return;
+              reserveMatch(matchId, i+1, j+1, 1)
+            }}
+
           >
             {cellNumber}
           </button>
@@ -109,8 +173,21 @@ export default function ViewMatch() {
         <h1 style={{
           marginBottom: '1rem',
           color: '#3f51b5',
-        }}> Stadium Info </h1>
+        }}> {stadium} VIP Reservations </h1>
         {grid}
+        <button 
+        onClick={()=>{
+          reserveMatch(matchId, 0, 0, 0)
+        }}
+        style={{
+          marginTop: '1rem',
+          border: '1px solid #3f51b5',
+          borderRadius: '2rem',
+          padding: '0.5rem 1rem',
+          backgroundColor: '#3f51b5',
+          color: 'white',
+          cursor: 'pointer'
+        }}>Make a Normal Reservation Instead</button>
       </div>
     );
   };
@@ -203,9 +280,9 @@ export default function ViewMatch() {
         </div>
 
       </div>
-      <div >
-      <ButtonGrid rows={3} columns={3} specialCellNumbers={[1, 8, 9]} />
-      </div>
+      {(role === 2) && <div>
+      <ButtonGrid rows={stadiumInfo.rows} columns={stadiumInfo.columns} specialCellNumbers={stadiumInfo.special} />
+      </div>}
       </div>
       }
     </div>

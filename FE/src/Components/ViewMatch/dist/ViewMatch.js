@@ -6,12 +6,15 @@ var react_router_dom_1 = require("react-router-dom");
 var material_1 = require("@mui/material");
 var Common_1 = require("../../Common");
 var react_redux_1 = require("react-redux");
+var api_1 = require("../../States/api");
+var axios_2 = require("axios");
 function ViewMatch() {
     var matchId = react_router_dom_1.useParams().matchId;
     var history = react_router_dom_1.useHistory();
     var role = react_redux_1.useSelector(function (state) { return state.user.userInfo.role; });
     var isLoggedIn = react_redux_1.useSelector(function (state) { return state.user.isLoggedIn; });
     var isVerified = react_redux_1.useSelector(function (state) { return state.user.userInfo.isVerified; });
+    var accessToken = react_redux_1.useSelector(function (state) { return state.user.userInfo.accessToken; });
     if (!Number.parseInt(matchId)) {
         history.push('/NotFound');
     }
@@ -23,6 +26,37 @@ function ViewMatch() {
     var _f = react_1.useState(''), firstLineRef = _f[0], setFirstLineRef = _f[1];
     var _g = react_1.useState(''), secondLineRef = _g[0], setSecondLineRef = _g[1];
     var _h = react_1.useState(new Date()), date = _h[0], setDate = _h[1];
+    var reserveMatch = function (id, row, column, type) {
+        var body;
+        if (type === 1) {
+            body = {
+                match_id: id,
+                seat: "vip",
+                seat_row: row,
+                seat_number: column
+            };
+        }
+        else {
+            body = {
+                match_id: id,
+                seat: "norm"
+            };
+        }
+        axios_2["default"]({
+            method: "POST",
+            url: api_1.api + "/api/ticket/create",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + accessToken
+            },
+            data: body
+        })
+            .then(function (response) {
+            alert("Reservation was Successful");
+        })["catch"](function (error) {
+            alert(error.response.data.message);
+        });
+    };
     react_1.useEffect(function () {
         axios_1["default"]
             .get("api/match/" + matchId, {})
@@ -38,6 +72,24 @@ function ViewMatch() {
                 var secondRef = data['lineman_2'];
                 var matchDate = new Date(0);
                 matchDate.setUTCSeconds(data['match_date']);
+                // for each set in data.reserved_vip_seats
+                //add to the array of special cells
+                var specialCells = [];
+                for (var i = 0; i < data.reserved_vip_seats.length; i++) {
+                    var seat = data.reserved_vip_seats[i];
+                    var seat_row = seat.seat_row - 1;
+                    for (var j = 0; j < seat.seat_number.length; j++) {
+                        var seat_col = seat.seat_number[j] - 1;
+                        specialCells.push(seat_row * data.no_seats_per_row + seat_col + 1);
+                    }
+                }
+                console.log(data.reserved_vip_seats);
+                console.log(specialCells);
+                setStadiumInfo({
+                    rows: data.no_rows_in_vip,
+                    columns: data.no_seats_per_row,
+                    special: specialCells
+                });
                 setTeam1("Team " + t1Id);
                 setTeam2("Team " + t2Id);
                 setStadium(stadium_name);
@@ -51,14 +103,18 @@ function ViewMatch() {
             history.push('/NotFound');
         });
     }, [matchId]);
-    var _j = react_1.useState({}), stadiumInfo = _j[0], setStadiumInfo = _j[1];
+    var _j = react_1.useState({
+        rows: 1,
+        columns: 1,
+        special: [1, 2, 3]
+    }), stadiumInfo = _j[0], setStadiumInfo = _j[1];
     // rewrite the line above for typescript
     var ButtonGrid = function (_a) {
         var rows = _a.rows, columns = _a.columns, specialCellNumbers = _a.specialCellNumbers;
         var grid = [];
-        for (var i = 0; i < rows; i++) {
+        var _loop_1 = function (i) {
             var row = [];
-            for (var j = 0; j < columns; j++) {
+            var _loop_2 = function (j) {
                 var cellNumber = i * columns + j + 1;
                 var isSpecial = specialCellNumbers.includes(cellNumber);
                 row.push(react_1["default"].createElement("button", { key: cellNumber, style: {
@@ -68,18 +124,42 @@ function ViewMatch() {
                         borderRadius: '50%',
                         width: '3rem',
                         height: '3rem',
-                        cursor: 'pointer',
+                        cursor: isSpecial ? '' : 'pointer',
                         border: '3px solid #3f51b5'
+                    }, onClick: function () {
+                        if (isSpecial)
+                            return;
+                        reserveMatch(matchId, i + 1, j + 1, 1);
                     } }, cellNumber));
+            };
+            for (var j = 0; j < columns; j++) {
+                _loop_2(j);
             }
             grid.push(react_1["default"].createElement("div", { key: i, style: { display: 'block' } }, row));
+        };
+        for (var i = 0; i < rows; i++) {
+            _loop_1(i);
         }
         return (react_1["default"].createElement("div", { style: { display: 'flex', marginTop: '2rem', marginBottom: '3rem', flexDirection: 'column', alignItems: 'center' } },
             react_1["default"].createElement("h1", { style: {
                     marginBottom: '1rem',
                     color: '#3f51b5'
-                } }, " Stadium Info "),
-            grid));
+                } },
+                " ",
+                stadium,
+                " VIP Reservations "),
+            grid,
+            react_1["default"].createElement("button", { onClick: function () {
+                    reserveMatch(matchId, 0, 0, 0);
+                }, style: {
+                    marginTop: '1rem',
+                    border: '1px solid #3f51b5',
+                    borderRadius: '2rem',
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#3f51b5',
+                    color: 'white',
+                    cursor: 'pointer'
+                } }, "Make a Normal Reservation Instead")));
     };
     return (react_1["default"].createElement("div", { style: {
             display: 'flex',
@@ -125,7 +205,7 @@ function ViewMatch() {
                         (isLoggedIn && role === 1 && isVerified)
                             &&
                                 react_1["default"].createElement(material_1.Button, { onClick: function () { history.push("/EditMatch/" + matchId); }, style: { borderRadius: 2, margin: '5px' }, variant: "outlined", fullWidth: true }, "Edit"))),
-                react_1["default"].createElement("div", null,
-                    react_1["default"].createElement(ButtonGrid, { rows: 3, columns: 3, specialCellNumbers: [1, 8, 9] })))));
+                (role === 2) && react_1["default"].createElement("div", null,
+                    react_1["default"].createElement(ButtonGrid, { rows: stadiumInfo.rows, columns: stadiumInfo.columns, specialCellNumbers: stadiumInfo.special })))));
 }
 exports["default"] = ViewMatch;
