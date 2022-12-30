@@ -43,8 +43,8 @@ const Navbar = () => {
         <Link to="/">Home</Link>
         <Link to="/ViewAllMatches" >View Matches</Link>
         
-        {role < 2 && <Link to="/CreateMatch">Create a match</Link>}
-        {role < 2 && <Link to="/AddStadium">Add a stadium</Link>}
+        {isLoggedIn && role < 2 && <Link to="/CreateMatch">Create a match</Link>}
+        {isLoggedIn && role < 2 && <Link to="/AddStadium">Add a stadium</Link>}
 
         {isLoggedIn && <Link to="/Profile">Profile</Link>}
 
