@@ -115,9 +115,6 @@ export function dropDown(
 }
 
 export function matchDate(date: Date, setDate: ReactCallback<Date>) {
-  let minDate = new Date(Date.now());
-  minDate.setDate(minDate.getDate() + 2);
-
   return (
     <Box width='200px' >
       <DatePicker
@@ -127,7 +124,7 @@ export function matchDate(date: Date, setDate: ReactCallback<Date>) {
         onChange={(newValue) => {
           setDate(new Date(newValue!!.toString()));
         }}
-        minDate={minDate}
+        minDate={minDate()}
       />
     </Box>
   );
@@ -209,4 +206,11 @@ export function areInputsValid(
 
   setValidInputs(enable);
   return enable;
+}
+
+
+export function minDate(): Date {
+  let minDate = new Date(Date.now());
+  minDate.setDate(minDate.getDate() + 2);
+  return minDate;
 }

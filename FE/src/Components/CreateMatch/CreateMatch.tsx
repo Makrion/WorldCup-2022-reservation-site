@@ -4,7 +4,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { authHeader } from "../../auth";
 import axios from 'axios'
-import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from "../../Common";
+import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium, minDate } from "../../Common";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -30,10 +30,7 @@ export default function CreateMatch() {
   const [secondLineRef, setSecondLineRef] = useState('');
 
 
-  const defaultDate = new Date();
-  defaultDate.setDate(defaultDate.getDate() + 2);
-  defaultDate.setHours(defaultDate.getHours() + 1);
-  const [date, setDate] = useState(defaultDate);
+  const [date, setDate] = useState(minDate());
 
   const [stadiums, setStadiums] = useState(new Array<Stadium>());
   const [teams, setTeams] = useState(new Array<string>());
@@ -187,6 +184,8 @@ function createMatchRequest(
   let t1 = Number.parseInt(team1.replace('Team ', ''));
   let t2 = Number.parseInt(team2.replace('Team ', ''));
   let stadium_id = stadium.id;
+
+  date.setSeconds(0);
   let time = Math.trunc(date.getTime() / 1000);
 
   console.log(t1);

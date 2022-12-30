@@ -7,7 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useParams, useHistory } from 'react-router-dom';
 
 import { authHeader } from "../../auth";
-import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, Stadium } from '../../Common';
+import { areInputsValid, dropDown, fetchRefs, fetchStadiums, fetchTeams, loading, matchDate, matchTime, minDate, Stadium } from '../../Common';
 import { useSelector } from 'react-redux';
 
 export default function EditMatch() {
@@ -37,7 +37,7 @@ export default function EditMatch() {
   const [mainRef, setMainRef] = useState('');
   const [firstLineRef, setFirstLineRef] = useState('');
   const [secondLineRef, setSecondLineRef] = useState('');
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(minDate());
 
   const [stadiums, setStadiums] = useState(new Array<Stadium>());
   const [teams, setTeams] = useState(new Array<string>());
@@ -237,6 +237,8 @@ function editMatchRequest(
   let t1 = Number.parseInt(team1.replace('Team ', ''));
   let t2 = Number.parseInt(team2.replace('Team ', ''));
   let stadium_id = stadium.id;
+
+  date.setSeconds(0);
   let time = Math.trunc(date.getTime() / 1000);
 
   console.log(t1);
