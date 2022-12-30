@@ -35,6 +35,8 @@ export default function ViewMatch() {
         if (response.status === 200) {
           let data = response.data;
 
+          console.log(data)
+
           let t1Id = data['team_1'];
           let t2Id = data['team_2'];
 
@@ -66,6 +68,54 @@ export default function ViewMatch() {
   }, [matchId]);
 
 
+  const [stadiumInfo, setStadiumInfo] = useState({})
+
+    // rewrite the line above for typescript
+  const ButtonGrid = ({ rows, columns, specialCellNumbers }: { rows: number, columns: number, specialCellNumbers: number[] }) => {
+    const grid = [];
+    for (let i = 0; i < rows; i++) {
+      const row = [];
+      for (let j = 0; j < columns; j++) {
+        const cellNumber = i * columns + j + 1;
+        const isSpecial = specialCellNumbers.includes(cellNumber);
+        row.push(
+          <button
+            key={cellNumber}
+            style={{
+              margin: '0.5em',
+              backgroundColor: isSpecial ? '#3f51b5' : 'white',
+              color: isSpecial ? 'white' : 'black',
+              borderRadius: '50%',
+              width: '3rem',
+              height: '3rem',
+              cursor: 'pointer',
+              border: '3px solid #3f51b5',
+
+            }}
+          >
+            {cellNumber}
+          </button>
+        );
+      }
+      grid.push(
+        <div key={i} style={{ display: 'block'}}>
+          {row}
+        </div>
+      );
+  }
+  
+    return (
+      <div style={{ display: 'flex', marginTop: '2rem', marginBottom: '3rem', flexDirection: 'column', alignItems: 'center' }}>
+        <h1 style={{
+          marginBottom: '1rem',
+          color: '#3f51b5',
+        }}> Stadium Info </h1>
+        {grid}
+      </div>
+    );
+  };
+
+
   return (
     <div style={{
       display: 'flex',
@@ -73,7 +123,10 @@ export default function ViewMatch() {
       justifyContent: 'center',
     }}>
       {isLoading && loading()}
-      {!isLoading && <div>
+      {!isLoading && 
+      <div style={{
+      }}>
+      <div>
         <h1 style={{ textAlign: 'center', padding: '20px' }}>Match Details</h1>
 
 
@@ -149,6 +202,10 @@ export default function ViewMatch() {
           }
         </div>
 
+      </div>
+      <div >
+      <ButtonGrid rows={3} columns={3} specialCellNumbers={[1, 8, 9]} />
+      </div>
       </div>
       }
     </div>

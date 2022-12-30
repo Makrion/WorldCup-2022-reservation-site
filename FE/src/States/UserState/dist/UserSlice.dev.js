@@ -63,20 +63,21 @@ var reducers = {
   }
 };
 var loginAPI = (0, _toolkit.createAsyncThunk)('user/login', function _callee(credentials) {
-  var response;
+  var api, response;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          _context.next = 2;
-          return regeneratorRuntime.awrap(_axios["default"].post("".concat(_api.api, "/api/user/login"), credentials));
+          api = 'http://141.147.48.195:8000';
+          _context.next = 3;
+          return regeneratorRuntime.awrap(_axios["default"].post("".concat(api, "/api/user/login"), credentials));
 
-        case 2:
+        case 3:
           response = _context.sent;
           console.log(response);
           return _context.abrupt("return", response.data);
 
-        case 5:
+        case 6:
         case "end":
           return _context.stop();
       }
@@ -85,19 +86,20 @@ var loginAPI = (0, _toolkit.createAsyncThunk)('user/login', function _callee(cre
 });
 exports.loginAPI = loginAPI;
 var signUpAPI = (0, _toolkit.createAsyncThunk)('user/signup', function _callee2(credentials) {
-  var response;
+  var api, response;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
-          _context2.next = 2;
-          return regeneratorRuntime.awrap(_axios["default"].post("".concat(_api.api, "/api/user/register"), credentials));
+          api = 'http://141.147.48.195:8000';
+          _context2.next = 3;
+          return regeneratorRuntime.awrap(_axios["default"].post("".concat(api, "/api/user/register"), credentials));
 
-        case 2:
+        case 3:
           response = _context2.sent;
           return _context2.abrupt("return", response.data);
 
-        case 4:
+        case 5:
         case "end":
           return _context2.stop();
       }
@@ -106,23 +108,25 @@ var signUpAPI = (0, _toolkit.createAsyncThunk)('user/signup', function _callee2(
 });
 exports.signUpAPI = signUpAPI;
 var logoutAPI = (0, _toolkit.createAsyncThunk)('user/logout', function _callee3(token) {
-  var response;
+  var api, response;
   return regeneratorRuntime.async(function _callee3$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
-          _context3.next = 2;
-          return regeneratorRuntime.awrap(_axios["default"].post("".concat(_api.api, "/api/user/logout"), {}, {
+          api = 'http://141.147.48.195:8000'; // make a post request and pass the access token in the header 
+
+          _context3.next = 3;
+          return regeneratorRuntime.awrap(_axios["default"].post("".concat(api, "/api/user/logout"), {}, {
             headers: {
               Authorization: "Bearer ".concat(token)
             }
           }));
 
-        case 2:
+        case 3:
           response = _context3.sent;
           return _context3.abrupt("return", response.data);
 
-        case 4:
+        case 5:
         case "end":
           return _context3.stop();
       }
@@ -131,31 +135,32 @@ var logoutAPI = (0, _toolkit.createAsyncThunk)('user/logout', function _callee3(
 });
 exports.logoutAPI = logoutAPI;
 var updateAPI = (0, _toolkit.createAsyncThunk)('user/update', function _callee4(credentials) {
-  var updatedCredentials, response;
+  var updatedCredentials, api, response;
   return regeneratorRuntime.async(function _callee4$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
           updatedCredentials = {};
+          api = 'http://141.147.48.195:8000';
           updatedCredentials.old_password = credentials.oldPassword;
           if (credentials.firstName) updatedCredentials.first_name = credentials.firstName;
           if (credentials.lastName) updatedCredentials.last_name = credentials.lastName;
           if (credentials.country) updatedCredentials.nationality = credentials.country;
           if (credentials.birthDate) updatedCredentials.birth_date = new Date(credentials.birthDate).getTime() / 1000;
           if (credentials.newPassword) updatedCredentials.password = credentials.newPassword;
-          _context4.next = 9;
-          return regeneratorRuntime.awrap(_axios["default"].put("".concat(_api.api, "/api/user/update"), updatedCredentials, {
+          _context4.next = 10;
+          return regeneratorRuntime.awrap(_axios["default"].put("".concat(api, "/api/user/update"), updatedCredentials, {
             headers: {
               Authorization: "Bearer ".concat(credentials.accessToken)
             }
           }));
 
-        case 9:
+        case 10:
           response = _context4.sent;
           console.log(response);
           return _context4.abrupt("return", response.data);
 
-        case 12:
+        case 13:
         case "end":
           return _context4.stop();
       }

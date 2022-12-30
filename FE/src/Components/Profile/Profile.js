@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 export default function Profile() {
    const userInfo = useSelector((state) => state.user.userInfo);
    const isAdmin = userInfo.role === 0;
+   const isFan =  userInfo.role === 2;
    return (
       <Grid container spacing={3}>
          <Grid item xs={12}>

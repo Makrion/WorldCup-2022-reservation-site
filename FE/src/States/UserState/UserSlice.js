@@ -62,6 +62,7 @@ const initialState = {
  export const loginAPI = createAsyncThunk(
   'user/login',
   async (credentials) => {
+    const api = 'http://141.147.48.195:8000'
     const response = await axios.post(`${api}/api/user/login`, credentials);
     console.log(response)
     return response.data;
@@ -71,6 +72,7 @@ const initialState = {
 export const signUpAPI = createAsyncThunk(
   'user/signup',
   async (credentials) => {
+    const api = 'http://141.147.48.195:8000'
     const response = await axios.post(`${api}/api/user/register`, credentials);
     return response.data;   
   }
@@ -79,6 +81,7 @@ export const signUpAPI = createAsyncThunk(
 export const logoutAPI = createAsyncThunk(
   'user/logout',
   async (token) => {
+    const api = 'http://141.147.48.195:8000'
     // make a post request and pass the access token in the header 
     const response = await axios.post(`${api}/api/user/logout`, {}, {
       headers: {
@@ -93,6 +96,8 @@ export const updateAPI = createAsyncThunk(
   'user/update',
   async (credentials) => {
     const updatedCredentials = {}
+    const api = 'http://141.147.48.195:8000'
+
     updatedCredentials.old_password = credentials.oldPassword
     if (credentials.firstName) updatedCredentials.first_name = credentials.firstName
     if (credentials.lastName) updatedCredentials.last_name = credentials.lastName
@@ -125,7 +130,7 @@ const extraReducers = {
     state.userInfo.country = action.payload.nationality
     state.userInfo.id = action.payload.id
     state.userInfo.role = action.payload.role
-    state.userInfo.isVerified = action.payload.is_verified    
+    state.userInfo.isVerified = action.payload.is_verified  
     state.isLoggedIn = true;
     // save userInfo to local storage
     localStorage.setItem('userInfo', JSON.stringify(state.userInfo))

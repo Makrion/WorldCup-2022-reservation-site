@@ -16,7 +16,7 @@ import axios from 'axios';
 import { loadInitialState } from './States/UserState/UserSlice'
 import { useDispatch } from 'react-redux'
 
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = 'http://141.147.48.195:8000';
 
 const App = () => {                           
   const dispatch = useDispatch();
