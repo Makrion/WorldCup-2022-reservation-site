@@ -231,7 +231,7 @@ var extraReducers = (_extraReducers = {}, _defineProperty(_extraReducers, loginA
 }), _defineProperty(_extraReducers, signUpAPI.pending, function (state, action) {
   state.isLoading = true;
 }), _defineProperty(_extraReducers, signUpAPI.rejected, function (state, action) {
-  state.error = action.error.message;
+  state.error = "Could not sign up. Please check your inputs and try again.";
   state.isLoading = false;
 }), _defineProperty(_extraReducers, updateAPI.fulfilled, function (state, action) {
   state.userInfo.firstName = action.payload.first_name;

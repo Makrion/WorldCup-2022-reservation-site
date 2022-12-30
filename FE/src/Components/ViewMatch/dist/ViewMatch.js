@@ -1,4 +1,11 @@
 "use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 exports.__esModule = true;
 var react_1 = require("react");
 var axios_1 = require("axios");
@@ -110,13 +117,14 @@ function ViewMatch() {
     }), stadiumInfo = _j[0], setStadiumInfo = _j[1];
     // rewrite the line above for typescript
     var ButtonGrid = function (_a) {
-        var rows = _a.rows, columns = _a.columns, specialCellNumbers = _a.specialCellNumbers;
+        var rows = _a.rows, columns = _a.columns, specialCellNumbers = _a.specialCellNumbers, setStadiumInfo = _a.setStadiumInfo;
         var grid = [];
+        var specialCells = __spreadArrays(specialCellNumbers);
         var _loop_1 = function (i) {
             var row = [];
             var _loop_2 = function (j) {
                 var cellNumber = i * columns + j + 1;
-                var isSpecial = specialCellNumbers.includes(cellNumber);
+                var isSpecial = specialCells.includes(cellNumber);
                 row.push(react_1["default"].createElement("button", { key: cellNumber, style: {
                         margin: '0.5em',
                         backgroundColor: isSpecial ? '#3f51b5' : 'white',
@@ -130,6 +138,12 @@ function ViewMatch() {
                         if (isSpecial)
                             return;
                         reserveMatch(matchId, i + 1, j + 1, 1);
+                        specialCells.push(cellNumber);
+                        setStadiumInfo({
+                            rows: rows,
+                            columns: columns,
+                            special: specialCells
+                        });
                     } }, cellNumber));
             };
             for (var j = 0; j < columns; j++) {
@@ -205,7 +219,7 @@ function ViewMatch() {
                         (isLoggedIn && role === 1 && isVerified)
                             &&
                                 react_1["default"].createElement(material_1.Button, { onClick: function () { history.push("/EditMatch/" + matchId); }, style: { borderRadius: 2, margin: '5px' }, variant: "outlined", fullWidth: true }, "Edit"))),
-                (role === 2) && react_1["default"].createElement("div", null,
-                    react_1["default"].createElement(ButtonGrid, { rows: stadiumInfo.rows, columns: stadiumInfo.columns, specialCellNumbers: stadiumInfo.special })))));
+                (role === 2) && (date >= new Date()) && react_1["default"].createElement("div", null,
+                    react_1["default"].createElement(ButtonGrid, { rows: stadiumInfo.rows, columns: stadiumInfo.columns, specialCellNumbers: stadiumInfo.special, setStadiumInfo: setStadiumInfo })))));
 }
 exports["default"] = ViewMatch;

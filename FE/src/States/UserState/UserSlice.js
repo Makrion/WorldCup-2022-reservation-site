@@ -195,7 +195,7 @@ const extraReducers = {
     state.isLoading = true;
   },
   [signUpAPI.rejected]: (state, action) => {
-   state.error = action.error.message
+   state.error = "Could not sign up. Please check your inputs and try again."
    state.isLoading = false;
    
   },

@@ -30,6 +30,7 @@ export default function ViewMatch() {
   const [secondLineRef, setSecondLineRef] = useState('');
   const [date, setDate] = useState(new Date());
 
+
   const reserveMatch = (id: any, row: any, column: any, type: any) => {
     let body;
     if(type===1){
@@ -124,6 +125,7 @@ export default function ViewMatch() {
   }, [matchId]);
 
 
+
   const [stadiumInfo, setStadiumInfo] = useState({
     rows: 1,
     columns: 1,
@@ -131,13 +133,14 @@ export default function ViewMatch() {
   })
 
     // rewrite the line above for typescript
-  const ButtonGrid = ({ rows, columns, specialCellNumbers }: { rows: number, columns: number, specialCellNumbers: number[] }) => {
+  const ButtonGrid = ({ rows, columns, specialCellNumbers, setStadiumInfo }: { rows: number, columns: number, specialCellNumbers: number[], setStadiumInfo: any }) => {
     const grid = [];
+    const specialCells = [...specialCellNumbers]
     for (let i = 0; i < rows; i++) {
       const row = [];
       for (let j = 0; j < columns; j++) {
         const cellNumber = i * columns + j + 1;
-        const isSpecial = specialCellNumbers.includes(cellNumber);
+        const isSpecial = specialCells.includes(cellNumber);
         row.push(
           <button
             key={cellNumber}
@@ -154,6 +157,13 @@ export default function ViewMatch() {
             onClick={() => {
               if(isSpecial) return;
               reserveMatch(matchId, i+1, j+1, 1)
+              specialCells.push(cellNumber);
+              setStadiumInfo({
+                rows: rows,
+                columns: columns,
+                special: specialCells
+              })
+
             }}
 
           >
@@ -280,8 +290,8 @@ export default function ViewMatch() {
         </div>
 
       </div>
-      {(role === 2) && <div>
-      <ButtonGrid rows={stadiumInfo.rows} columns={stadiumInfo.columns} specialCellNumbers={stadiumInfo.special} />
+      {(role === 2) && (date >= new Date()) && <div>
+      <ButtonGrid rows={stadiumInfo.rows} columns={stadiumInfo.columns} specialCellNumbers={stadiumInfo.special} setStadiumInfo={setStadiumInfo} />
       </div>}
       </div>
       }
