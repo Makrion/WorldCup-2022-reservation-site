@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 
 export default function CreateMatch() {
   const [isLoading, setIsLoading] = useState(true);
+  const accessToken = useSelector((state: any) => state.user.userInfo.accessToken);
 
   const history = useHistory();
 
@@ -17,8 +18,6 @@ export default function CreateMatch() {
   if(role >= 2) {
     history.push('/NotFound');
   }
-
-
 
   const [team1, setTeam1] = useState('');
   const [team2, setTeam2] = useState('');
@@ -150,7 +149,7 @@ export default function CreateMatch() {
         </div>
 
         <Button
-          onClick={() => createMatchRequest(team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, validateInputs)}
+          onClick={() => createMatchRequest(team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, validateInputs, accessToken)}
           style={{ width: '420px', borderRadius: 2 }}
           variant="outlined"
           fullWidth
@@ -173,7 +172,8 @@ function createMatchRequest(
   firstLineRef: string,
   secondLineRef: string,
   date: Date,
-  validateInputs: () => boolean
+  validateInputs: () => boolean,
+  authToken: string
 ) {
 
   let valid = validateInputs()
@@ -208,7 +208,7 @@ function createMatchRequest(
   axios.post(
     'api/match/create', 
     postData,
-    { headers: authHeader() }
+    { headers: authHeader(authToken) }
   ).then((response) => {
     console.log(response);
     if (response.status === 200) {

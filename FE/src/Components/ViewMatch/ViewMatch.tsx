@@ -11,6 +11,7 @@ export default function ViewMatch() {
   let { matchId } = useParams<{matchId?: string}>();
   const history = useHistory();
   const role = useSelector((state: any) => state.user.userInfo.role);
+  const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn);
 
   if(!Number.parseInt(matchId!!)) {
     history.push('/NotFound');
@@ -164,7 +165,7 @@ export default function ViewMatch() {
           </Button>
 
           {
-            (role < 2)
+            (isLoggedIn && role < 2)
             &&
             <Button
               onClick={() => { history.push(`/EditMatch/${matchId}`) }}
