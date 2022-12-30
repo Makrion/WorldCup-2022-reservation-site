@@ -44,8 +44,8 @@ const Navbar = () => {
         <Link to="/">Home</Link>
         <Link to="/ViewAllMatches" >View Matches</Link>
         
-        {isLoggedIn && isVerified && role < 2 && <Link to="/CreateMatch">Create a match</Link>}
-        {isLoggedIn && isVerified && role < 2 && <Link to="/AddStadium">Add a stadium</Link>}
+        {isLoggedIn && isVerified && role === 1 && <Link to="/CreateMatch">Create a match</Link>}
+        {isLoggedIn && isVerified && role === 1 && <Link to="/AddStadium">Add a stadium</Link>}
 
         {isLoggedIn && <Link to="/Profile">Profile</Link>}
 

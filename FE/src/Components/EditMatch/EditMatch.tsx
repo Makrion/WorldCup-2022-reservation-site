@@ -20,7 +20,7 @@ export default function EditMatch() {
 
   const history = useHistory();
 
-  if (!isLoggedIn || !Number.parseInt(matchId!!) || role >= 2 || !isVerified) {
+  if (!isLoggedIn || !Number.parseInt(matchId!!) || role === 1 || !isVerified) {
     history.push('/NotFound');
   }
 
@@ -56,7 +56,7 @@ export default function EditMatch() {
   const [validInputs, setValidInputs] = useState(true);
 
   useEffect(() => {
-    if (isLoggedIn && isVerified && role < 2) {
+    if (isLoggedIn && isVerified && role === 1) {
       fetchTeams(setTeams);
       fetchRefs(setRefs);
       fetchStadiums(setStadiums, accessToken);

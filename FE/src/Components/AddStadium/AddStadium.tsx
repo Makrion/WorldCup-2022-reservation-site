@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Button, TextField } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { authHeader } from "../../auth";
 import axios from 'axios'
 import { validate } from "../../Common";
@@ -15,7 +13,7 @@ export default function AddStadium() {
   const isVerified = useSelector((state: any) => state.user.userInfo.isVerified);
 
   const history = useHistory();
-  if (!isLoggedIn || role >= 2 || !isVerified) {
+  if (!isLoggedIn || role === 2 || !isVerified) {
     history.push('/NotFound');
   }
 

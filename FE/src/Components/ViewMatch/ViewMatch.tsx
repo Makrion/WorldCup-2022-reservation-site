@@ -136,7 +136,7 @@ export default function ViewMatch() {
           </Button>
 
           {
-            (isLoggedIn && role < 2 && isVerified)
+            (isLoggedIn && role === 1 && isVerified)
             &&
             <Button
               onClick={() => { history.push(`/EditMatch/${matchId}`) }}
