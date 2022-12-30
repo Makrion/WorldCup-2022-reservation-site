@@ -51,7 +51,7 @@ export default function CreateMatch() {
   const [validInputs, setValidInputs] = useState(true);
 
   useEffect(() => {
-    if (isLoggedIn && isVerified && role < 2) {
+    if (isLoggedIn && isVerified && role === 1) {
       fetchTeams(setTeams);
       fetchRefs(setRefs);
       fetchStadiums(setStadiums, accessToken);

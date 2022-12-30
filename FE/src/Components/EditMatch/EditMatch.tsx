@@ -20,7 +20,7 @@ export default function EditMatch() {
 
   const history = useHistory();
 
-  if (!isLoggedIn || !Number.parseInt(matchId!!) || role === 1 || !isVerified) {
+  if (!isLoggedIn || !Number.parseInt(matchId!!) || role !== 1 || !isVerified) {
     history.push('/NotFound');
   }
 

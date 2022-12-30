@@ -31,7 +31,6 @@ export class Match {
 export default function ViewAllMatches() {
   const [matches, setMatches] = useState(new Array<Match>());
   const [isLoading, setIsLoading] = useState(true);
-  let history = useHistory();
 
   useEffect(() => {
     axios
@@ -42,7 +41,7 @@ export default function ViewAllMatches() {
         }
       })
       .then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           let data = response.data;
           let mats = data['matches'].map((match: MatchJson) => Match.fromJson(match))
           setMatches(mats);
