@@ -12,6 +12,7 @@ export default function ViewMatch() {
   const history = useHistory();
   const role = useSelector((state: any) => state.user.userInfo.role);
   const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn);
+  const isVerified = useSelector((state: any) => state.user.userInfo.isVerified);
 
   if(!Number.parseInt(matchId!!)) {
     history.push('/NotFound');
@@ -21,27 +22,16 @@ export default function ViewMatch() {
 
   const [team1Name, setTeam1] = useState('');
   const [team2Name, setTeam2] = useState('');
-  const [stadium, setStadium] = useState(Stadium.default());
+  const [stadium, setStadium] = useState('');
   const [mainRef, setMainRef] = useState('');
   const [firstLineRef, setFirstLineRef] = useState('');
   const [secondLineRef, setSecondLineRef] = useState('');
   const [date, setDate] = useState(new Date());
 
-  const [stadiums, setStadiums] = useState(new Array<Stadium>());
-
-
   useEffect(() => {
-    fetchStadiums(setStadiums);
-  }, []);
-
-  useEffect(() => {
-    if(!stadiums || stadiums.length === 0) return;
-
     axios
       .get(`api/match/${matchId}`, {})
       .then((response) => {
-        console.log(response)
-        console.log(stadiums)
         if (response.status === 200) {
           let data = response.data;
 
@@ -49,8 +39,6 @@ export default function ViewMatch() {
           let t2Id = data['team_2'];
 
           let stadium_name: string = data['stadium_name'];
-          let stadium_id = stadiums.find((s) => s.name = stadium_name)!.id
-          let stadium: Stadium = { id: stadium_id, name: stadium_name };
 
           let ref: string = data['main_ref'];
           let firstRef: string = data['lineman_1'];
@@ -62,7 +50,7 @@ export default function ViewMatch() {
           setTeam1(`Team ${t1Id}`);
           setTeam2(`Team ${t2Id}`);
 
-          setStadium(stadium);
+          setStadium(stadium_name);
 
           setMainRef(ref);
           setFirstLineRef(firstRef);
@@ -75,25 +63,8 @@ export default function ViewMatch() {
       }).catch((error) => {
         history.push('/NotFound');
       });
-  }, [stadiums, matchId]);
+  }, [matchId]);
 
-
-  const enableCreateMatchButton: () => boolean = () => {
-    let enable = 
-         team1Name.length > 0
-      && team2Name.length > 0
-      && stadium.id >= 0
-      && mainRef.length > 0
-      && firstLineRef.length > 0
-      && secondLineRef.length > 0
-      && team1Name !== team2Name
-      && mainRef !== firstLineRef
-      && mainRef !== secondLineRef
-      && firstLineRef !== secondLineRef
-      && date.getTime() > Date.now()
-
-    return enable;
-  };
 
   return (
     <div style={{
@@ -121,7 +92,7 @@ export default function ViewMatch() {
 
         <div style={{ display: 'flex', flexDirection: 'column', padding: '10px', alignItems: 'center' }}>
             <h4 style={{fontWeight: 300}}>Stadium</h4>
-            <h2>{stadium.name}</h2>
+            <h2>{stadium}</h2>
         </div>
 
         <div
@@ -165,7 +136,7 @@ export default function ViewMatch() {
           </Button>
 
           {
-            (isLoggedIn && role < 2)
+            (isLoggedIn && role < 2 && isVerified)
             &&
             <Button
               onClick={() => { history.push(`/EditMatch/${matchId}`) }}

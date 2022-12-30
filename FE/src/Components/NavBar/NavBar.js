@@ -16,6 +16,7 @@ const Navbar = () => {
   const logoutSuccess = useSelector(state => state.user.logoutSuccess);
   const logoutError = useSelector(state => state.user.logoutError);
   const role = useSelector(state => state.user.userInfo.role);
+  const isVerified = useSelector((state) => state.user.userInfo.isVerified);
 
   useEffect(() => {
     if (logoutSuccess) {
@@ -43,8 +44,8 @@ const Navbar = () => {
         <Link to="/">Home</Link>
         <Link to="/ViewAllMatches" >View Matches</Link>
         
-        {isLoggedIn && role < 2 && <Link to="/CreateMatch">Create a match</Link>}
-        {isLoggedIn && role < 2 && <Link to="/AddStadium">Add a stadium</Link>}
+        {isLoggedIn && isVerified && role < 2 && <Link to="/CreateMatch">Create a match</Link>}
+        {isLoggedIn && isVerified && role < 2 && <Link to="/AddStadium">Add a stadium</Link>}
 
         {isLoggedIn && <Link to="/Profile">Profile</Link>}
 

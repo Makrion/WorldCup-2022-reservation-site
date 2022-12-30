@@ -14,10 +14,13 @@ export default function EditMatch() {
 
   let { matchId } = useParams<{ matchId?: string }>();
   const role = useSelector((state: any) => state.user.userInfo.role);
+  const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn);
+  const accessToken = useSelector((state: any) => state.user.userInfo.accessToken);
+  const isVerified = useSelector((state: any) => state.user.userInfo.isVerified);
 
   const history = useHistory();
 
-  if (!Number.parseInt(matchId!!) || role >= 2) {
+  if (!isLoggedIn || !Number.parseInt(matchId!!) || role >= 2 || !isVerified) {
     history.push('/NotFound');
   }
 
@@ -53,9 +56,11 @@ export default function EditMatch() {
   const [validInputs, setValidInputs] = useState(true);
 
   useEffect(() => {
-    fetchTeams(setTeams);
-    fetchRefs(setRefs);
-    fetchStadiums(setStadiums);
+    if (isLoggedIn && isVerified && role < 2) {
+      fetchTeams(setTeams);
+      fetchRefs(setRefs);
+      fetchStadiums(setStadiums, accessToken);
+    }
   }, []);
 
   useEffect(() => { !validInputs && validateInputs() }, [team1, team2, stadium, mainRef, firstLineRef, secondLineRef]);
@@ -196,7 +201,7 @@ export default function EditMatch() {
             </Button>
 
             <Button
-              onClick={() => editMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, validateInputs)}
+              onClick={() => editMatchRequest(matchId ?? "", team1, team2, stadium, mainRef, firstLineRef, secondLineRef, date, validateInputs, accessToken)}
               style={{ borderRadius: 2, marginLeft: '10px'}}
               variant="outlined"
               fullWidth
@@ -221,7 +226,8 @@ function editMatchRequest(
   firstLineRef: string,
   secondLineRef: string,
   date: Date,
-  validateInputs: () => boolean
+  validateInputs: () => boolean,
+  accessToken: string,
 ) {
 
   let valid = validateInputs()
@@ -252,7 +258,7 @@ function editMatchRequest(
     "stadium_id": stadium_id
   },
     {
-      headers: authHeader()
+      headers: authHeader(accessToken)
     }
   ).then((response) => {
     if (response.status === 200) {

@@ -10,12 +10,15 @@ import { useSelector } from "react-redux";
 
 export default function CreateMatch() {
   const [isLoading, setIsLoading] = useState(true);
+
+  const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn);
   const accessToken = useSelector((state: any) => state.user.userInfo.accessToken);
+  const isVerified = useSelector((state: any) => state.user.userInfo.isVerified);
 
   const history = useHistory();
 
   const role = useSelector((state: any) => state.user.userInfo.role);
-  if(role >= 2) {
+  if(!isLoggedIn || role >= 2 || !isVerified) {
     history.push('/NotFound');
   }
 
@@ -48,10 +51,12 @@ export default function CreateMatch() {
   const [validInputs, setValidInputs] = useState(true);
 
   useEffect(() => {
-    fetchTeams(setTeams);
-    fetchRefs(setRefs);
-    fetchStadiums(setStadiums);
-  }, []);
+    if (isLoggedIn && isVerified && role < 2) {
+      fetchTeams(setTeams);
+      fetchRefs(setRefs);
+      fetchStadiums(setStadiums, accessToken);
+    }
+  }, [accessToken]);
 
   useEffect(
     () => {

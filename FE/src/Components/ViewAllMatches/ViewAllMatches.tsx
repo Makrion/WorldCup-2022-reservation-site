@@ -83,10 +83,10 @@ export default function ViewAllMatches() {
 
                           <div style={{ display: 'flex', flexDirection: 'column', padding: '0px 40px', alignItems: 'center' }}>
                             <h1 style={{ fontStyle: 'italic', fontWeight: 200 }}> VS </h1>
-                            <div style={{ alignContent: 'left' }}>
+                            {/* <div style={{ alignContent: 'left' }}>
                               <h6>{new Date(match.matchDate).toUTCString()}</h6>
                               <h6>@ {match.stadiumName}</h6>
-                            </div>
+                            </div> */}
                           </div>
 
                           <h2 style={{ margin: '9px' }}>Team {match.team2Id}</h2>

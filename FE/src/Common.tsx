@@ -45,14 +45,14 @@ export function fetchTeams(setTeams: ReactCallback<Array<string>>) {
   setTeams(teams);
 }
 
-export function fetchStadiums(setData: ReactCallback<Array<Stadium>>) {
+export function fetchStadiums(setData: ReactCallback<Array<Stadium>>, authToken: string) {
   axios.get('api/stadiums',
     {
       params: {
         page_size: 32,
         current_page: 1
       },
-      headers: authHeader()
+      headers: authHeader(authToken)
     }
   ).then((response) => {
     if (response.status === 200) {
@@ -157,7 +157,7 @@ export function areInputsValid(
   stadium: Stadium,
   setErrors: ReactCallback<CreateMatchErrors>,
   date: Date,
- setValidInputs: ReactCallback<boolean>
+  setValidInputs: ReactCallback<boolean>
 ) {
   let newErrors = { ...errors };
 
