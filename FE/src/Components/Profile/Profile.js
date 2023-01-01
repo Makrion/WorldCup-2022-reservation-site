@@ -23,7 +23,7 @@ export default function Profile() {
          </Grid>
       </Grid>
       {!isVerified && <h1>You're Management Request Has Not Been Approved Yet</h1>}
-      {isFan && <ReservedMatches />}
+      { isFan && <ReservedMatches />}
       </>
    )
 }

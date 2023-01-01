@@ -65,6 +65,8 @@ export function fetchStadiums(setData: ReactCallback<Array<Stadium>>, authToken:
       } else {
         setData([]);
       }
+      console.log("Stadium Source:" + authToken)
+
     }
   }).catch((erroro) => {
     alert("Error connecting to the server :(")

@@ -9,86 +9,104 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import ReactLoading from 'react-loading';
 import Axios from 'axios';
-
+import { authHeader } from '../../auth';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     maxWidth: '80%',
     marginLeft: '3rem'
-
   },
   button: {
     margin: theme.spacing(1),
     backgroundColor: '#3f51b5',
-    color: 'white'
+    color: 'white',
+    float: 'right',
   },
+  ListItemText: {
+    color: '#3f51b5',
+    cursor: 'pointer'
+  }
 }));
 
 export default function ReservedMatches() {
   const classes = useStyles();
-  const accessToken = useSelector((state) => state.user.accessToken);
+  const accessToken = useSelector((state) => state.user.userInfo.accessToken);
+  const user_id = useSelector((state) => state.user.userInfo.id)
   const [matches, setMatches] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
 
-  React.useEffect(() => {
-    const body = { page_size: 20, current_page: 1 }
 
-    axios.get(`${api}/api/tickets`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
+   React.useEffect(() => {
+     const body = { page_size: 20, current_page: 1 }
+
+    axios.get(`${api}/api/tickets`,
+    {
+      params: {
+        page_size: 32,
+        current_page: 1
+      },
+      headers: authHeader(accessToken)
+    }
+    ).then((response) => {
+      console.log(response.data.matches)
+      setIsLoading(false)
+      const user_matches = []
+      for (let i=0; i<response.data.matches.length ;i++){
+        let match = response.data.matches[i]
+        if (match.user_id === user_id)     user_matches.push(match)
       }
-    })
-    .then((response) => {
-      setIsLoading(false);
-      alert('success')
-      console.log(response.data)
-    })
-    .catch((error) => {
-      alert('ouch')
-      console.log(error);
-    })
-  }, [])
+      setMatches(user_matches)
+    }).catch((erroro) => {
+      alert("Error connecting to the server :(")
+    });
+     
+   }, [])
   
 
 
 
-
-  const mockReservedMatches = [
-    {
-      match_id: 1,
-      date: 1672324713,
-      name: "Match 1",
-      seatType: "Normal",
-      tickerNumber: "a3248jsdfi323",
-    },
-    {
-      match_id: 2,
-      date: 1672324713,
-      name: "Match 2",
-      seatType: "VIP",
-      tickerNumber: "a3248jsdfi323",
-    },
-  ];
-
-  const handleCancelReservation = (matchId) => {
-    // TODO: Cancel the reservation for the match with the given matchId
+  const handleCancelReservation = (ticketId) => {
+    Axios({
+      method: "DELETE",
+      url: `${api}/api/ticket/delete/`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: {
+        ticket_number: ticketId
+      },
+    })
+    .then((response) => {
+      setMatches(matches.filter((match) => match.ticket_number !== ticketId))
+    })
+    .catch((error) => {
+      alert(error);
+    })
   };
 
   return (
     <>
     <h1 style={{marginLeft: '3rem'}}>Your Reserved Matches</h1>
-    <List className={classes.root}>
-      {mockReservedMatches.map((match) => (
+    {!isLoading && <List className={classes.root}>
+      {matches.map((match) => (
         <ListItem key={match.match_id}>
-          <ListItemText primary={match.name} secondary={`Date: ${match.date} | Seat type: ${match.seatType} | Ticket number: ${match.tickerNumber}`} />
-          <Button variant="contained"  className={classes.button} onClick={() => handleCancelReservation(match.match_id)}>
+          <Link to={`/ViewMatch/${match.match_id}`}
+          style={{
+            textDecoration: 'none',
+          }}>
+          <ListItemText  className={classes.ListItemText} primary={`Match ${match.match_id}`} secondary={`Date: ${new Date(match.reservation_date).toISOString().split('T')[0]} | Seat type: ${match.seat} | Ticket number: ${match.ticket_number} | Seat Location: row ${match.seat_row? match.seat_row:'unspecified'} column${match.seat_number? match.seat_number:'unspecified'}`} />
+          </Link>
+          <Button variant="contained"  className={classes.button} onClick={() => handleCancelReservation(match.ticket_number)}>
             Cancel reservation
           </Button>
         </ListItem>
       ))}
-    </List>
+    </List>}
+    {isLoading && <ReactLoading  color='#3f51b5'></ReactLoading>}
     </>
   );
 }

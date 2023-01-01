@@ -66,7 +66,7 @@ const Home  = () => {
             </Link>
             :null}
 
-            {!isLoggedIn && <Link to="/View" style={{
+            {!isLoggedIn && <Link to="/ViewAllMatches" style={{
             textDecoration: 'none',
           }}>
             
