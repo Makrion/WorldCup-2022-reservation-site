@@ -9,14 +9,14 @@ import Axios from "axios";
 
 export default function ViewMatch() {
 
-  let { matchId } = useParams<{matchId?: string}>();
+  let { matchId } = useParams<{ matchId?: string }>();
   const history = useHistory();
   const role = useSelector((state: any) => state.user.userInfo.role);
   const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn);
   const isVerified = useSelector((state: any) => state.user.userInfo.isVerified);
   const accessToken = useSelector((state: any) => state.user.userInfo.accessToken);
 
-  if(!Number.parseInt(matchId!!)) {
+  if (!Number.parseInt(matchId!!)) {
     history.push('/NotFound');
   }
 
@@ -33,20 +33,20 @@ export default function ViewMatch() {
 
   const reserveMatch = (id: any, row: any, column: any, type: any) => {
     let body;
-    if(type===1){
-     body = {
-      match_id: id,
-      seat: "vip",
-      seat_row: row,
-      seat_number: column
+    if (type === 1) {
+      body = {
+        match_id: id,
+        seat: "vip",
+        seat_row: row,
+        seat_number: column
+      }
     }
-  }
-  else {
-     body = {
-      match_id: id,
-      seat: "norm",
+    else {
+      body = {
+        match_id: id,
+        seat: "norm",
+      }
     }
-  }
     Axios({
       method: "POST",
       url: `${api}/api/ticket/create`,
@@ -56,12 +56,12 @@ export default function ViewMatch() {
       },
       data: body,
     })
-    .then((response) => {
-      alert("Reservation was Successful")
-    })
-    .catch((error) => {
-      alert(error.response.data.message);
-    })
+      .then((response) => {
+        alert("Reservation was Successful")
+      })
+      .catch((error) => {
+        alert(error.response.data.message);
+      })
   }
 
   useEffect(() => {
@@ -85,16 +85,16 @@ export default function ViewMatch() {
           matchDate.setUTCSeconds(data['match_date']);
 
 
-         // for each set in data.reserved_vip_seats
+          // for each set in data.reserved_vip_seats
           //add to the array of special cells
           const specialCells = [];
           for (let i = 0; i < data.reserved_vip_seats.length; i++) {
             let seat = data.reserved_vip_seats[i];
             let seat_row = seat.seat_row - 1;
             for (let j = 0; j < seat.seat_number.length; j++) {
-            let seat_col = seat.seat_number[j] - 1 ;
+              let seat_col = seat.seat_number[j] - 1;
 
-            specialCells.push(seat_row * data.no_seats_per_row + seat_col + 1);
+              specialCells.push(seat_row * data.no_seats_per_row + seat_col + 1);
             }
           }
           console.log(data.reserved_vip_seats);
@@ -132,7 +132,7 @@ export default function ViewMatch() {
     special: [1, 2, 3]
   })
 
-    // rewrite the line above for typescript
+  // rewrite the line above for typescript
   const ButtonGrid = ({ rows, columns, specialCellNumbers, setStadiumInfo }: { rows: number, columns: number, specialCellNumbers: number[], setStadiumInfo: any }) => {
     const grid = [];
     const specialCells = [...specialCellNumbers]
@@ -151,12 +151,12 @@ export default function ViewMatch() {
               borderRadius: '50%',
               width: '3rem',
               height: '3rem',
-              cursor: isSpecial? '':'pointer',
+              cursor: isSpecial ? '' : 'pointer',
               border: '3px solid #3f51b5',
             }}
             onClick={() => {
-              if(isSpecial) return;
-              reserveMatch(matchId, i+1, j+1, 1)
+              if (isSpecial) return;
+              reserveMatch(matchId, i + 1, j + 1, 1)
               specialCells.push(cellNumber);
               setStadiumInfo({
                 rows: rows,
@@ -172,12 +172,12 @@ export default function ViewMatch() {
         );
       }
       grid.push(
-        <div key={i} style={{ display: 'block'}}>
+        <div key={i} style={{ display: 'block' }}>
           {row}
         </div>
       );
-  }
-  
+    }
+
     return (
       <div style={{ display: 'flex', marginTop: '2rem', marginBottom: '3rem', flexDirection: 'column', alignItems: 'center' }}>
         <h1 style={{
@@ -185,19 +185,19 @@ export default function ViewMatch() {
           color: '#3f51b5',
         }}> {stadium} VIP Reservations </h1>
         {grid}
-        <button 
-        onClick={()=>{
-          reserveMatch(matchId, 0, 0, 0)
-        }}
-        style={{
-          marginTop: '1rem',
-          border: '1px solid #3f51b5',
-          borderRadius: '2rem',
-          padding: '0.5rem 1rem',
-          backgroundColor: '#3f51b5',
-          color: 'white',
-          cursor: 'pointer'
-        }}>Make a Normal Reservation Instead</button>
+        <button
+          onClick={() => {
+            reserveMatch(matchId, 0, 0, 0)
+          }}
+          style={{
+            marginTop: '1rem',
+            border: '1px solid #3f51b5',
+            borderRadius: '2rem',
+            padding: '0.5rem 1rem',
+            backgroundColor: '#3f51b5',
+            color: 'white',
+            cursor: 'pointer'
+          }}>Make a Normal Reservation Instead</button>
       </div>
     );
   };
@@ -210,90 +210,96 @@ export default function ViewMatch() {
       justifyContent: 'center',
     }}>
       {isLoading && loading()}
-      {!isLoading && 
-      <div style={{
-      }}>
-      <div>
-        <h1 style={{ textAlign: 'center', padding: '20px' }}>Match Details</h1>
+      {!isLoading &&
+        <div style={{
+        }}>
+          <div>
+            <div>
+              <h1 style={{ textAlign: 'center', padding: '20px' }}>Match Details</h1>
 
 
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-          <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
-              <h4 style={{textAlign:'center', fontWeight: 300}}>Team 1</h4>
-              <h2>{team1Name}</h2>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
+                  <h4 style={{ textAlign: 'center', fontWeight: 300 }}>Team 1</h4>
+                  <h2>{team1Name}</h2>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
+                  <h4 style={{ textAlign: 'center', fontWeight: 300 }}>Team 2</h4>
+                  <h2>{team2Name}</h2>
+                </div>
+              </div>
+
+
+              <div style={{ display: 'flex', flexDirection: 'column', padding: '10px', alignItems: 'center' }}>
+                <h4 style={{ fontWeight: 300 }}>Stadium</h4>
+                <h2>{stadium}</h2>
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '10px',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <h4 style={{ fontWeight: 300 }}>Match Date</h4>
+                <h2>{date.toUTCString()}</h2>
+              </div>
+
+              <div style={{ display: 'flex', padding: '10px', alignItems: 'center', flexDirection: 'column' }}>
+                <h4 style={{ fontWeight: 300 }}>Main Referee</h4>
+                <h2>{mainRef}</h2>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'row', padding: 10, alignContent: 'center' , alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', padding: 10, alignItems: 'center' }}>
+                  <h4 style={{ fontWeight: 300 }}>First Line Referee</h4>
+                  <h2>{firstLineRef}</h2>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', padding: 10, alignItems: 'center' }}>
+                  <h4 style={{ fontWeight: 300 }}>Second Line Referee</h4>
+                  <h2>{secondLineRef}</h2>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'row', width: '450px', margin: 'auto'}}>
+                <Button
+                  onClick={() => { history.goBack() }}
+                  style={{ borderRadius: 2, margin: '5px auto', width: '200px' }}
+                  variant="contained"
+                >
+                  Back
+                </Button>
+
+                {
+                  (isLoggedIn && role === 1 && isVerified)
+                  &&
+                  <Button
+                    onClick={() => { history.push(`/EditMatch/${matchId}`) }}
+                    style={{ borderRadius: 2, margin: '5px auto', width: '200px'}}
+                    variant="outlined"
+                    fullWidth
+                  >
+                    Edit
+                  </Button>
+                }
+              </div>
+
+            </div>
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', padding: 10}}>
-            <h4 style={{textAlign:'center', fontWeight: 300 }}>Team 2</h4>
-            <h2>{team2Name}</h2>
+          <div>
+            {
+              (role === 2) && (date >= new Date()) &&
+              <div>
+                <ButtonGrid rows={stadiumInfo.rows} columns={stadiumInfo.columns} specialCellNumbers={stadiumInfo.special} setStadiumInfo={setStadiumInfo} />
+              </div>
+            }
           </div>
         </div>
-
-
-        <div style={{ display: 'flex', flexDirection: 'column', padding: '10px', alignItems: 'center' }}>
-            <h4 style={{fontWeight: 300}}>Stadium</h4>
-            <h2>{stadium}</h2>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '10px',
-            alignItems: 'center', 
-            justifyContent: 'center', 
-          }}
-        >
-          <h4 style={{fontWeight: 300}}>Match Date</h4>
-          <h2>{date.toUTCString()}</h2>
-        </div>
-
-        <div style={{ display: 'flex', padding: '10px', alignItems: 'center', flexDirection: 'column' }}>
-          <h4 style={{fontWeight: 300}}>Main Referee</h4>
-          <h2>{mainRef}</h2>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'row', padding: 10, alignContent: 'center'}}>
-          <div style={{ display: 'flex', flexDirection: 'column', padding: 10, alignItems: 'center'}}>
-            <h4 style={{fontWeight: 300}}>First Line Referee</h4>
-            <h2>{firstLineRef}</h2>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', padding: 10, alignItems: 'center'}}>
-            <h4 style={{fontWeight: 300}}>Second Line Referee</h4>
-            <h2>{secondLineRef}</h2>
-          </div>
-        </div>
-
-        <div style={{display: 'flex', flexDirection: 'row'}}>
-          <Button
-            onClick={() => { history.goBack() }}
-            style={{ borderRadius: 2, margin: '5px'}}
-            variant="contained"
-            fullWidth
-          >
-            Back
-          </Button>
-
-          {
-            (isLoggedIn && role === 1 && isVerified)
-            &&
-            <Button
-              onClick={() => { history.push(`/EditMatch/${matchId}`) }}
-              style={{ borderRadius: 2, margin: '5px' }}
-              variant="outlined"
-              fullWidth
-            >
-              Edit
-            </Button>
-          }
-        </div>
-
-      </div>
-      {(role === 2) && (date >= new Date()) && <div>
-      <ButtonGrid rows={stadiumInfo.rows} columns={stadiumInfo.columns} specialCellNumbers={stadiumInfo.special} setStadiumInfo={setStadiumInfo} />
-      </div>}
-      </div>
       }
     </div>
   );
