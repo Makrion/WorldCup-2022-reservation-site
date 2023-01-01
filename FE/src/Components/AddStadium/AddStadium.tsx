@@ -49,9 +49,19 @@ export default function AddStadium() {
     }
 
     newErrors.stadiumName = validate(stadiumName, 'Stadium name', (t) => t.length > 0);
-    newErrors.numRows = validate(numRows, 'Number of rows', checkInt);
-    newErrors.seatsPerRow = validate(seatsPerRow, 'Seats per row', checkInt);
-    console.log(newErrors)
+
+    if(!(checkInt(numRows) && Number.parseInt(numRows) <= 100)) {
+      newErrors.numRows = 'Invalid number of rows or number too high (max: 100)';
+    } else {
+      newErrors.numRows = ''
+    }
+
+
+    if(!(checkInt(seatsPerRow) && Number.parseInt(seatsPerRow) <= 100)) {
+      newErrors.seatsPerRow = 'Invalid number of seats per row or number too high (max: 100)';
+    } else {
+      newErrors.seatsPerRow = ''
+    }
 
     setErrors(newErrors);
 

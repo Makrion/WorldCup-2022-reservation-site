@@ -88,6 +88,13 @@ export default function ReservedMatches() {
     })
   };
 
+    const getDate = (sec) => {
+        let date = new Date(0);
+        date.setSeconds(sec);
+
+        return date.toISOString().split('T')[0];
+    }
+
   return (
     <>
     <h1 style={{marginLeft: '3rem'}}>Your Reserved Matches</h1>
@@ -98,7 +105,7 @@ export default function ReservedMatches() {
           style={{
             textDecoration: 'none',
           }}>
-          <ListItemText  className={classes.ListItemText} primary={`Match ${match.match_id}`} secondary={`Date: ${new Date(match.reservation_date).toISOString().split('T')[0]} | Seat type: ${match.seat} | Ticket number: ${match.ticket_number} | Seat Location: row ${match.seat_row? match.seat_row:'unspecified'} column${match.seat_number? match.seat_number:'unspecified'}`} />
+          <ListItemText  className={classes.ListItemText} primary={`Match ${match.match_id}`} secondary={`Date: ${getDate(match.reservation_date)} | Seat type: ${match.seat} | Ticket number: ${match.ticket_number} | Seat Location: row ${match.seat_row? match.seat_row:'unspecified'} column${match.seat_number? match.seat_number:'unspecified'}`} />
           </Link>
           <Button variant="contained"  className={classes.button} onClick={() => handleCancelReservation(match.ticket_number)}>
             Cancel reservation
