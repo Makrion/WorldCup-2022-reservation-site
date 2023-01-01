@@ -50,15 +50,15 @@ export default function AddStadium() {
 
     newErrors.stadiumName = validate(stadiumName, 'Stadium name', (t) => t.length > 0);
 
-    if(!(checkInt(numRows) && Number.parseInt(numRows) <= 100)) {
-      newErrors.numRows = 'Invalid number of rows or number too high (max: 100)';
+    if(!(checkInt(numRows) && Number.parseInt(numRows) <= 100 && Number.parseInt(numRows) > 0)) {
+      newErrors.numRows = 'Invalid number of rows (min: 1, max: 100)';
     } else {
       newErrors.numRows = ''
     }
 
 
-    if(!(checkInt(seatsPerRow) && Number.parseInt(seatsPerRow) <= 100)) {
-      newErrors.seatsPerRow = 'Invalid number of seats per row or number too high (max: 100)';
+    if(!(checkInt(seatsPerRow) && Number.parseInt(seatsPerRow) <= 100 && Number.parseInt(seatsPerRow) > 0)) {
+      newErrors.seatsPerRow = 'Invalid number of seats per row (min: 1, max: 100)';
     } else {
       newErrors.seatsPerRow = ''
     }
