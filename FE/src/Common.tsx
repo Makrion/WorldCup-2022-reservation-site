@@ -41,7 +41,17 @@ export function loading() {
 }
 
 export function fetchTeams(setTeams: ReactCallback<Array<string>>) {
-  let teams = Array.from(Array(32).keys()).map((teamNumber) => `Team ${teamNumber}`);
+  let teams = [
+    "Qatar", "Netherlands", "Senegal", "Ecuador",
+    "England", "USA", "Wales", "Iran",
+    "Argentina", "Poland", "Mexico", "Saudi Arabia",
+    "France", "Denmark", "Tunisia", "Australia",
+    "Germany", "Spain", "Japan", "Costa Rica",
+    "Belgium", "Croatia", "Canada", "Morocco",
+    "Brazil", "Switzerland", "Serbia", "Cameroon",
+    "Portugal", "Uruguay", "Ghana", "Korea Republic"
+  ];
+
   setTeams(teams);
 }
 

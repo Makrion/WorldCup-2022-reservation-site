@@ -3,7 +3,7 @@ import axios from "axios";
 import { List } from "@mui/material";
 import { Divider, ListItem, ListItemText } from "@material-ui/core";
 import { Link, useHistory } from 'react-router-dom';
-import { loading } from "../../Common";
+import { fetchTeams, loading } from "../../Common";
 
 type MatchJson = { id: string, team_1: string, team_2: string, stadium_name: string, match_date: number };
 
@@ -30,6 +30,7 @@ export class Match {
 
 export default function ViewAllMatches() {
   const [matches, setMatches] = useState(new Array<Match>());
+  const [teams, setTeams] = useState(new Array<string>());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -49,6 +50,8 @@ export default function ViewAllMatches() {
           setIsLoading(false);
         }
       })
+
+      fetchTeams(setTeams);
   }, []);
 
   const matchList = () => {
@@ -67,7 +70,7 @@ export default function ViewAllMatches() {
                 >
                   <ListItemText>
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <h2 style={{ margin: '9px' }}>Team {match.team1Id}</h2>
+                      <h2 style={{ margin: '9px', width: '100px' }}>{teams[Number.parseInt(match.team1Id)]}</h2>
 
                       <div style={{ display: 'flex', flexDirection: 'column', padding: '0px 40px', alignItems: 'center' }}>
                         <h1 style={{ fontStyle: 'italic', fontWeight: 200 }}> VS </h1>
@@ -77,7 +80,7 @@ export default function ViewAllMatches() {
                             </div> */}
                       </div>
 
-                      <h2 style={{ margin: '9px' }}>Team {match.team2Id}</h2>
+                      <h2 style={{ margin: '9px', width: '100px' }}>{teams[Number.parseInt(match.team2Id)]}</h2>
                     </div>
                   </ListItemText>
                 </ListItem><Divider />
