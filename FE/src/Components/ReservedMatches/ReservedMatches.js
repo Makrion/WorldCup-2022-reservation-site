@@ -84,7 +84,7 @@ export default function ReservedMatches() {
       setMatches(matches.filter((match) => match.ticket_number !== ticketId))
     })
     .catch((error) => {
-      alert(error);
+      alert(error.response.data.message);
     })
   };
 
