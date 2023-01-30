@@ -24,5 +24,7 @@ An online automated ticket reservation system for football matches in FIFA World
 - ```npm start```
 
 
-
+# Collaborators
+<!-- readme: collaborators -start -->
+<!-- readme: collaborators -end -->
 
